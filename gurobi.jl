@@ -75,19 +75,19 @@ function Gurobi_optimalMO(C)
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
-    #m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0)) #No muestra resultados por consola.
+    m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0)) #No muestra resultados por consola.
     #m = Model(with_optimizer(optimizer, params))
-    m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro")) #No muestra resultados por consola.
+    #m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro")) #No muestra resultados por consola.
     #m = Model(with_optimizer(KNITRO.Optimizer)) #No muestra resultados por consola.
 
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     f1 = @expression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
-    @NLexpression(m,f2Array[j = 1:num_candidatas],abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
-    f2(x) = max(x);
-    JuMP.register(m, :f2, num_candidatas, f2, autodiff=true);
+    #@NLexpression(m,f2Array[j = 1:num_candidatas],abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
+    #f2(x) = max(x);
+    #JuMP.register(m, :f2, num_candidatas, f2, autodiff=true);
 
-    #@objective(m,Min,f1);
-    @NLobjective(m,Min,0.5*f1+0.5*f2(f2Array));
+    @objective(m,Min,f1);
+    #@NLobjective(m,Min,0.5*f1+0.5*f2(f2Array));
 
     #for i in ESTACIONES
     #    for j in CANDIDATAS
