@@ -38,7 +38,7 @@ objs_array = [];
 for e = 1:experimentos
     C_test = zeros(Int64,length(CANDIDATAS));
     E_test = zeros(Int64,length(ESTACIONES));
-    C_test,E_test,objs_iter = @time PLSAngel(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT);
+    C_test,E_test,objs_iter = @time PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT);
     append!(objs_array,objs_iter);
 end
 let suma = 0.0;
