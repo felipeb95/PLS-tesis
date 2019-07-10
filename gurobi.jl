@@ -76,7 +76,7 @@ function Gurobi_optimalMO(C)
 
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
-    f2Array = zeros(Float64,num_candidatas);
+    #f2Array = zeros(Float64,num_candidatas);
     E = zeros(Int64,num_stations);
     #m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0)) #No muestra resultados por consola.
     #m = Model(with_optimizer(optimizer, params))
@@ -84,22 +84,25 @@ function Gurobi_optimalMO(C)
     #m = Model(with_optimizer(KNITRO.Optimizer)) #No muestra resultados por consola.
 
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
-    @variable(m,beta);
+    #@variable(m,beta);
     f1 = @expression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
-    f2 = @expression(m,beta);
-    ##@NLexpression(m,f2Array[j = 1:num_candidatas],abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
-    #f2(f2Array) = max(f2Array);
-    #JuMP.register(m, :f2, num_candidatas, f2, autodiff=true);
+    #f2 = @expression(m,beta);
+    @NLexpression(m,f2Array[j = 1:num_candidatas],abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
+    indice_max = 0;
+    max_value = 0;
+    for j in CANDIDATAS
+        if value(f2Array[j]) >= max_value
+            max_value = value(f2Array[j]);
+            indice_max = j;
+        end
+    end
+    #@NLexpression(m,f2Array[j = 1:num_candidatas],abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
+    #f_2(f2Array) = max(f2Array);
+    #register(m, :f_2, 1, f_2, autodiff=true);
 
     #@objective(m,Min,f1);
-    @objective(m,Min,0.5*f1+0.5*f2);
+    @objective(m,Min,0.5*f1+0.5*f2Array[indice_max]);
 
-
-    #for i in ESTACIONES
-    #    for j in CANDIDATAS
-    #        @constraint(m,x[i,j] >=0)
-    #    end
-    #end
     for i in ESTACIONES
         @constraint(m,sum(x[i,j] for j in CANDIDATAS) == 1)
     end
@@ -119,21 +122,16 @@ function Gurobi_optimalMO(C)
         end
     end
 
-    for j in CANDIDATAS
-        expr2 = @expression(m,sum(r_menos[i]*x[i,j] for i in ESTACIONES));
-        expr3 = @expression(m,sum(r_mas[i]*x[i,j] for i in ESTACIONES));
+    #for j in CANDIDATAS
+        #expr2 = @expression(m,sum(r_menos[i]*x[i,j] for i in ESTACIONES));
+        #expr3 = @expression(m,sum(r_mas[i]*x[i,j] for i in ESTACIONES));
         #@constraint(m, (expr2 - expr3)  <= balance  *  (expr2 + expr3));
         #@constraint(m,(-expr2 + expr3) <= balance  *  (expr2 + expr3));
-        f2Array[j] = @NLexpression(m,abs(expr2-expr3)/(expr2+expr3));
-
-    end
-
-    for j in CANDIDATAS
-        @NLconstraint(m,beta>=f2Array[j])
-    end
+    #end
 
 
     optimize!(m)
+    println(f2Array)
     status = termination_status(m);
     println("TERMINATION STATUS: ", status);
     Z_opt = objective_value(m);
@@ -142,7 +140,7 @@ function Gurobi_optimalMO(C)
     println("X_OPT: ", length(x_opt));
     println("FUNCION 1 POR RETORNAR: ", value(f1));
     #f2 = rand()
-    println("FUNCION 2 POR RETORNAR: ", value(f2));
+    println("FUNCION 2 POR RETORNAR: ", f2Array[indice_max]);
 
     if #=(status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) ||=# (Z_opt - floor(Z_opt) != 0 || length(x_opt) == 0)
         return Inf, zeros(num_stations,num_stations);
