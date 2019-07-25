@@ -31,7 +31,7 @@ function PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
     st = solucion;
     #SOLUCION INICIAL
     while true
-        println("SOLUCION INICIAL");
+        println("[PLS] Solución inicial");
         C,E,f1,f2,obj = init_solution_mo(); #GENERAR SOLUCIÓN INICIAL
         if obj != Inf
             st = solucion(C,E,f1,f2,obj,0);
@@ -126,7 +126,7 @@ function PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
         end
         r+=1;
     end
-    println("====== Resultados ======");
+    println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
     println("Estructura vecindario   = $neighborhood_structure");
     println("Vecinos por iteración   = $len_N");
