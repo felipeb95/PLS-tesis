@@ -68,37 +68,47 @@ function PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
         #while k <= k_max
             #println("=== k =  $(neighborhood_structure[k]) ===")
             #Se generan vecinos
-            println("GENERANDO VECINOS");
+            println("[PLS] === Generación de vecinos ===");
             N = generar_vecindario(len_N,st.C,neighborhood_structure[k],mem_C,index_mem_C);
             indiceVisitado = findall(x -> x==st, A);
             A[indiceVisitado[1]].visitado = 1;
-            println("MARCANDO COMO VISITADO EN ESPACIO", indiceVisitado[1]);
+            println("[PLS] Índice marcado como visitado: ", indiceVisitado[1]);
 
             for i=1:len_N
-                println("----------------------VECINO ",i)
+                println("[PLS] Vecino # ",i," ===============");
                 aux_obj, aux_f1, aux_f2, aux_E = Gurobi_optimalMO(N[i,:]);
                 #=  revisar si es dominado por los que están en el archivo
                 si no es dominado por ninguno, entra al archivo  =#
 
                 if criterioAcceso(aux_f1,aux_f2,A) == true
-                    println("CUMPLE REQUISITOS");
+                    #println("CUMPLE REQUISITOS");
                     solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,0);
                     push!(A,solNueva);
-                    println("SE AGREGA a A: ", length(A));
+                    #println("SE AGREGA a A: ", length(A));
 
                     #=  se buscan los índices de las soluciones que están dentro
                     del archivo y que están siendo dominadas por la última
                     solución agregada al archivo =#
 
                     indicesAEliminar = revisarDominanciaEnArchivo(aux_f1,aux_f2,A);
-
+                    str_indicesEliminados = "";
                     if length(indicesAEliminar) != 0
-                        println("SE DEBEN ELIMINAR INDICES DOMINADOS: ", indicesAEliminar)
+                        for dominatedIndex = 1 : length(indicesAEliminar)
+                            str_indicesEliminados *= string(indicesAEliminar[dominatedIndex]);
+                            if dominatedIndex != length(indicesAEliminar)
+                                str_indicesEliminados *= ", ";
+                            else
+                                str_indicesEliminados *= ".";
+                            end
+                        end
+                        println("[PLS] Indices a eliminar tras análisis dominancia: ", str_indicesEliminados);
                         #= se eliminan los elementos en el array con los indices
                         que se guardaron anteriormente. A se actualiza mediante
                         la función deleteat! =#
                         deleteat!(A,indicesAEliminar);
-                        println("NUEVO A:", length(A));
+                        println("[PLS] # nuevo de soluciones en archivo:", length(A));
+                    else
+                        println("[PLS] No se encontraron soluciones dominadas");
                     end
                 end
             end
@@ -110,7 +120,7 @@ function PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
         iteración, =#
 
         st = selArchivo(A);
-        println("NUEVO A:", length(A));
+        #println("NUEVO A: ", length(A));
         if(st == nothing)
             break;
         end
@@ -159,7 +169,7 @@ end
 function visitados(archivo)
     visited = true;
     for i in 1:length(archivo)
-        println("=============== ",i," ===============\n")
+        #println("=============== ",i," ===============\n")
         if(archivo[i].visitado == 0)
             visited = false;
             break;
