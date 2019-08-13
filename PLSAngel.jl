@@ -3,6 +3,7 @@ mutable struct solucion
     E
     f1
     f2
+    obj
     visitado
 end
 
@@ -33,7 +34,7 @@ function PLSAngel(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
         println("SOLUCION INICIAL");
         C,E,f1,f2,obj = init_solution_mo(); #GENERAR SOLUCIÓN INICIAL
         if obj != Inf
-            st = solucion(C,E,f1,f2,0);
+            st = solucion(C,E,f1,f2,obj,0);
             push!(A,st); #ACTUALIZAR ACHIVO
             println("A:", length(A));
             break;
@@ -48,14 +49,8 @@ function PLSAngel(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    #current_obj = zeros(Float64,r_max);
-    #objs_iter = [];
-    #cong_k = [];
-    #obj_k = [];
-
     #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
     while ~visitados(A)
-
         k = 1;
         println("ITERACION ",k);
 
@@ -75,7 +70,7 @@ function PLSAngel(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
 
             for j=1:len_N
                 aux_obj, aux_f1, aux_f2, aux_E = Gurobi_optimalMO(N[j,:]);
-                solNueva = solucion(N[j,:],aux_E,aux_f1,aux_f2,0);
+                solNueva = solucion(N[j,:],aux_E,aux_f1,aux_f2,aux_obj,0);
                 push!(A,solNueva);
             end
 
@@ -84,43 +79,43 @@ function PLSAngel(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
         A = analisisDominancia(A);
         println("LARGO A DESPUES DEL ANALISIS ",length(A))
     end
-    println("====== Resultados ======");
-    println("n° iter       = $r_max");
-    println("Prioridad      = $prioridad");
-    println("Balance        = $balance");
-    println("neighborhood_structure = $neighborhood_structure");
-    println("Len_N         = $len_N");
-    println("N° clusters   = $cl");
-    println("N° estaciones = $(length(ESTACIONES))");
-    println("N° mejoras    = $(improve)");
-    println("N° iter       = $(r_max)");
-    println("1° FO         = $first_obj");
-    println("FO            = $obj");
-    println("Centros       = $(findall(x->x==1,C))");
-    println("C = $C");
-    println("E = $E");
 
-    name = "$(balance)_$(prioridad)_exp_$(e)_$(r_max)_$(len_N)_$(improve)_$(obj)";
+    println("[PLS] ====== Resultados ======");
+    println("n° iter                 = $t");
+    println("Estructura vecindario   = $neighborhood_structure");
+    println("Vecinos por iteración   = $len_N");
+    println("N° clusters             = $cl");
+    println("N° estaciones           = $(length(ESTACIONES))");
+    println("1° FO Weighted Sum  = $first_obj");
+    println("1° FO1              = $first_obj_f1");
+    println("1° FO2              = $first_obj_f2");
+
+    name = "expPLSAngel_$(t)_$(len_N)_$(obj)";
     filename = name*".txt"
     open(filename, "w") do file
-        write(file, "n° iter       = $r_max \n")
-        write(file, "neighborhood_structure = $neighborhood_structure \n")
-        write(file, "Prioridad     = $prioridad \n")
-        write(file, "balance       = $balance \n")
-        write(file, "Len_N         = $len_N \n")
-        write(file, "N° clusters   = $cl \n")
-        write(file, "N° estaciones = $(length(ESTACIONES)) \n")
-        write(file, "N° mejoras    = $(improve)\n")
-        write(file, "N° iter       = $(r_max)\n")
-        write(file, "1° FO         = $first_obj\n")
-        write(file, "FO            = $obj\n")
-        write(file, "Centros       = $(findall(x->x==1,C))\n")
-        write(file, "C = $C\n")
-        write(file, "E = $E\n")
-        write(file, "Objs= $objs_iter\n")
-        write(file, "current_obj = $current_obj\n")
-        write(file, "cong_K= $cong_k \n");
-        write(file, "obj_k= $obj_k \n");
+        write(file, "n° iter               = $t \n")
+        write(file, "Estructura vecindario = $neighborhood_structure \n")
+        write(file, "Vecinos por iteración = $len_N \n")
+        write(file, "N° clusters           = $cl \n")
+        write(file, "N° estaciones         = $(length(ESTACIONES)) \n")
+        write(file, "1° FO Weighted Sum    = $first_obj\n")
+        write(file, "1° FO1                = $first_obj_f1\n")
+        write(file, "1° FO2                = $first_obj_f2\n")
+        #sacar de archivo
+        for i in 1:length(A)
+            aC       = copy(A[i].C);
+            aE       = copy(A[i].E);
+            a_obj    = copy(A[i].obj);
+            a_obj_f1 = copy(A[i].f1);
+            a_obj_f2 = copy(A[i].f2);
+            write(file, "Archivo [$i] \n")
+
+            write(file, "C               = $aC \n");
+            write(file, "E               = $aE \n");
+            write(file, "FO Weighted Sum = $a_obj \n");
+            write(file, "FO1             = $a_obj_f1 \n");
+            write(file, "FO2             = $a_obj_f2 \n");
+        end
     end
     return C,E,obj;
 end

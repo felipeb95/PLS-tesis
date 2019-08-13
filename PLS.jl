@@ -49,69 +49,54 @@ function PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    #current_obj = zeros(Float64,r_max);
-    #objs_iter = [];
-    #cong_k = [];
-    #obj_k = [];
-
     #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
     while ~visitados(A)
         k = 1;
+        #Se generan vecinos
+        println("[PLS] === Generación de vecinos ===");
+        N = generar_vecindario(len_N,st.C,neighborhood_structure[k],mem_C,index_mem_C);
+        indiceVisitado = findall(x -> x==st, A);
+        A[indiceVisitado[1]].visitado = 1;
+        println("[PLS] Índice marcado como visitado: ", indiceVisitado[1]);
 
-        #println("====== $r ====== $obj");
-        #push!(objs_iter,obj);
+        for i=1:len_N
+            println("[PLS] Vecino # ",i," ===============");
+            aux_obj, aux_f1, aux_f2, aux_E = Gurobi_optimalMO(N[i,:]);
+            #=  revisar si es dominado por los que están en el archivo
+            si no es dominado por ninguno, entra al archivo  =#
 
-        #current_obj[r] = Inf;
+            if criterioAcceso(aux_f1,aux_f2,A) == true
+                #println("CUMPLE REQUISITOS");
+                solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,0);
+                push!(A,solNueva);
+                #println("SE AGREGA a A: ", length(A));
 
+                #=  se buscan los índices de las soluciones que están dentro
+                del archivo y que están siendo dominadas por la última
+                solución agregada al archivo =#
 
-
-        #while k <= k_max
-            #println("=== k =  $(neighborhood_structure[k]) ===")
-            #Se generan vecinos
-            println("[PLS] === Generación de vecinos ===");
-            N = generar_vecindario(len_N,st.C,neighborhood_structure[k],mem_C,index_mem_C);
-            indiceVisitado = findall(x -> x==st, A);
-            A[indiceVisitado[1]].visitado = 1;
-            println("[PLS] Índice marcado como visitado: ", indiceVisitado[1]);
-
-            for i=1:len_N
-                println("[PLS] Vecino # ",i," ===============");
-                aux_obj, aux_f1, aux_f2, aux_E = Gurobi_optimalMO(N[i,:]);
-                #=  revisar si es dominado por los que están en el archivo
-                si no es dominado por ninguno, entra al archivo  =#
-
-                if criterioAcceso(aux_f1,aux_f2,A) == true
-                    #println("CUMPLE REQUISITOS");
-                    solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,0);
-                    push!(A,solNueva);
-                    #println("SE AGREGA a A: ", length(A));
-
-                    #=  se buscan los índices de las soluciones que están dentro
-                    del archivo y que están siendo dominadas por la última
-                    solución agregada al archivo =#
-
-                    indicesAEliminar = revisarDominanciaEnArchivo(aux_f1,aux_f2,A);
-                    str_indicesEliminados = "";
-                    if length(indicesAEliminar) != 0
-                        for dominatedIndex = 1 : length(indicesAEliminar)
-                            str_indicesEliminados *= string(indicesAEliminar[dominatedIndex]);
-                            if dominatedIndex != length(indicesAEliminar)
-                                str_indicesEliminados *= ", ";
-                            else
-                                str_indicesEliminados *= ".";
-                            end
+                indicesAEliminar = revisarDominanciaEnArchivo(aux_f1,aux_f2,A);
+                str_indicesEliminados = "";
+                if length(indicesAEliminar) != 0
+                    for dominatedIndex = 1 : length(indicesAEliminar)
+                        str_indicesEliminados *= string(indicesAEliminar[dominatedIndex]);
+                        if dominatedIndex != length(indicesAEliminar)
+                            str_indicesEliminados *= ", ";
+                        else
+                            str_indicesEliminados *= ".";
                         end
-                        println("[PLS] Indices a eliminar tras análisis dominancia: ", str_indicesEliminados);
-                        #= se eliminan los elementos en el array con los indices
-                        que se guardaron anteriormente. A se actualiza mediante
-                        la función deleteat! =#
-                        deleteat!(A,indicesAEliminar);
-                        println("[PLS] # nuevo de soluciones en archivo:", length(A));
-                    else
-                        println("[PLS] No se encontraron soluciones dominadas");
                     end
+                    println("[PLS] Indices a eliminar tras análisis dominancia: ", str_indicesEliminados);
+                    #= se eliminan los elementos en el array con los indices
+                    que se guardaron anteriormente. A se actualiza mediante
+                    la función deleteat! =#
+                    deleteat!(A,indicesAEliminar);
+                    println("[PLS] # nuevo de soluciones en archivo:", length(A));
+                else
+                    println("[PLS] No se encontraron soluciones dominadas");
                 end
             end
+        end
         #end
         t+=1;
 
@@ -136,7 +121,7 @@ function PLS(k_max,r_max,len_N,neighborhood_structure,e,NO_IMPROVE_LIMIT)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "exp_$(t)_$(len_N)_$(obj)";
+    name = "expPLSPaquete_$(t)_$(len_N)_$(obj)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "n° iter               = $t \n")
