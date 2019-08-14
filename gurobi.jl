@@ -113,10 +113,10 @@ function Gurobi_optimalMO(C)
             @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
         end
     end
-    #f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))); #sin division
+    f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))); #sin division
     #f2Array = @NLexpression(m, [j = 1:num_candidatas],sum(r_mas[i]*(x[i,j])^2 for i in ESTACIONES))
-    f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
-    @NLconstraint(m, [j = 1:num_candidatas], beta >= f2Array[j])
+    #f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES))/(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)));
+    @NLconstraint(m, [j = 1:num_candidatas], beta*(sum(r_menos[i]*x[i,j] for i in ESTACIONES)+sum(r_mas[i]*x[i,j] for i in ESTACIONES)) >= f2Array[j])
     #for j in CANDIDATAS
         #expr2 = @expression(m,sum(r_menos[i]*x[i,j] for i in ESTACIONES));
         #expr3 = @expression(m,sum(r_mas[i]*x[i,j] for i in ESTACIONES));
