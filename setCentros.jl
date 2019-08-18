@@ -25,10 +25,12 @@ end
 name = "centros";
 filename = name*".txt"
 open(filename, "w") do file
-    for i in 1:n
+    for i in 1:nCentros
         aC       = copy(setC[i]);
-        write(file, "Centro [$i] \n")
-
-        write(file, "$aC\n");
+        if i!=nCentros
+            write(file, "$aC\n");
+        else
+            write(file, "$aC");
+        end
     end
 end
