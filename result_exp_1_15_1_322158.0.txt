@@ -1,4 +1,0 @@
-promedio       = 322158.0 
-d.e            = NaN   
-best           = 322158.0 
-worst          = 322158.0 

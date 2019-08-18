@@ -1,3 +1,14 @@
+function generarC()
+    _C = zeros(Int64,length(CANDIDATAS));
+    while true
+        _C = init_solution_C_grid();
+        if validate_connection(_C)
+            break;
+        end
+    end
+    return _C
+end
+
 function init_solution_mo()
     _C = zeros(Int64,length(CANDIDATAS));
     _E = zeros(Int64,length(ESTACIONES));
@@ -9,37 +20,15 @@ function init_solution_mo()
             break;
         end
     end
-    println("SOLVER");
-    _obj,_f1,_f2,_E = Gurobi_optimalMO(_C);
+    _obj,_f1,_f2,_E = SolverNL(_C);
     return _C,_E,_f1,_f2,_obj;
 end
 
-
-function init_solution()
-    _C = zeros(Int64,length(CANDIDATAS));
+function init_solution_mo(_C)
     _E = zeros(Int64,length(ESTACIONES));
     _obj = Inf;
-
-    #TESTING
-    _Et = zeros(Int64,length(ESTACIONES));
-    _objt = Inf;
-
-    _Ett = zeros(Int64,length(ESTACIONES));
-    _objtt = Inf;
-
-    while true
-        _C = init_solution_C_grid();
-        if validate_connection(_C)
-            break;
-        end
-    end
-    println("GUROBI");
-    _obj,_E = @time Gurobi_optimal(_C);
-    #println("AMPL");
-    #_objt,_Et = @time Ampl_optimal(_C);
-    #println("KNITRO");
-    #_objtt,_Ett = @time Knitro_optimal(_C);
-    return _C,_E,_obj;
+    _obj,_f1,_f2,_E = SolverNL(_C);
+    return _C,_E,_f1,_f2,_obj;
 end
 
 function init_solution_C()
