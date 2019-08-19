@@ -52,7 +52,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
             N = generar_vecindario(len_N,st.C,neighborhood_structure,mem_C,index_mem_C);
             indiceVisitado = findall(x -> x==st, A);
             A[indiceVisitado[1]].visitado = 1;
-            println("MARCANDO COMO VISITADO EN ESPACIO", indiceVisitado[1]);
+            println("MARCANDO COMO VISITADO EN ESPACIO ", indiceVisitado[1]);
 
             for j=1:len_N
                 aux_obj, aux_f1, aux_f2, aux_E = SolverNL(N[j,:]);

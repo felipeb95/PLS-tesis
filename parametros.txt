@@ -1,0 +1,5 @@
+vecindario:3
+estructura_vecino:1
+a_ws:0.5
+expPaquete:20
+nCentros:1

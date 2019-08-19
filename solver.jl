@@ -37,10 +37,9 @@ function SolverNL(C)
     status = termination_status(m);
     Z_opt = objective_value(m);
     x_opt = value.(x);
-    println("TERMINATION STATUS: ", status);
-    println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
-    println("FUNCION 1 POR RETORNAR: ", value(f1));
-    println("FUNCION 2 POR RETORNAR: ", value(f2));
+    #println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
+    #println("FUNCION 1 POR RETORNAR: ", value(f1));
+    #println("FUNCION 2 POR RETORNAR: ", value(f2));
 
     if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
         return Inf, zeros(num_stations,num_stations);
