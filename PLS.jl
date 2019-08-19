@@ -102,7 +102,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)";
+    name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_n)_$(neighborhood_structure)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "alfa Weighted Sum     = $a_ws \n")

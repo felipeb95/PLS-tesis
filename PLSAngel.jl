@@ -45,7 +45,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
         NV = getNoVisitadas(A);
         for i=1:length(NV)
             st = NV[i];
-            println("RECORRRIENDO NO VISITADA nº ",i)
+            println("RECORRRIENDO NO VISITADA nº $i de ", length(NV))
 
             #Se generan vecinos
             println("GENERANDO VECINOS");
@@ -77,7 +77,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSAngel_$(numCentro)_$(a_ws)";
+    name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_n)_$(neighborhood_structure)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "alfa Weighted Sum     = $a_ws \n")

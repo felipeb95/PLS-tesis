@@ -42,7 +42,7 @@ function SolverNL(C)
     #println("FUNCION 2 POR RETORNAR: ", value(f2));
 
     if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
-        return Inf, zeros(num_stations,num_stations);
+        return Inf, Inf, Inf, E;
     else
         for i in ESTACIONES
             E[i] = findall(x->x==1,x_opt[i,:])[1];

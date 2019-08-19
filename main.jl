@@ -1,4 +1,5 @@
 include("load_data.jl");
+include("parametros.jl");
 include("solver.jl");
 include("helpers.jl");
 include("funcionesPLS.jl")
@@ -17,15 +18,7 @@ global adjacency_matrix = get_adjacency_matrix();
 #Matriz de conexiones.
 global c                = connection_calculation();
 
-#PARAMETROS MODIFICABLES
-len_N =3;  #Tamaño del vecindario
-neighborhood_structure = 1; #Cuantos centros se abriran y cerraran por vecion
-global a_ws = 0.5; #Alfa weighted sum
-expPaquete = 20; #Numero de experimentos a realizar en PLS de Paquete
-
-
 #CREACION DE CENTROS#
-nCentros = 1;
 setC = [];
 centro = zeros(Int64,length(CANDIDATAS));
 for i = 1:nCentros
@@ -50,14 +43,12 @@ end
 
 #PLS
 for i=1:nCentros
-    #=
     for e = 1:expPaquete
         A_Paquete = solucion[]
         A_Paquete = @time PLS(len_N,neighborhood_structure,e,setC[i],i);
     end
-    =#
-    A_Angel = solucion[]
-    A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
+    #A_Angel = solucion[]
+    #A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
 end
 
 #=let suma = 0.0;

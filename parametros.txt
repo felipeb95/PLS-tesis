@@ -1,5 +1,5 @@
-vecindario:3
-estructura_vecino:1
+len_N:3
+neighborhood_structure:1
 a_ws:0.5
-expPaquete:20
+expPaquete:1
 nCentros:1
