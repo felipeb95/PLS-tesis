@@ -43,12 +43,27 @@ end
 
 #PLS
 for i=1:nCentros
-    for e = 1:expPaquete
-        A_Paquete = solucion[]
-        A_Paquete = @time PLS(len_N,neighborhood_structure,e,setC[i],i);
+    println("Prueba con centro nº ",i);
+    for a = 1:length(array_a_ws)
+        global a_ws = array_a_ws[a];
+        println("Prueba con alfa (Weighted Sum) = ",a_ws);
+        for l = 1:length(array_len_N)
+            len_N = array_len_N[l];
+            println("Prueba con largo vecindario = ",len_N);
+            for n = 1:length(array_neighborhood_structure)
+                neighborhood_structure = array_neighborhood_structure[n];
+                println("Prueba con estructura vecinos = ",neighborhood_structure);
+                for e = 1:expPaquete
+                    println("Experimento Paquete nº ",e);
+                    A_Paquete = solucion[]
+                    A_Paquete = @time PLS(len_N,neighborhood_structure,e,setC[i],i);
+                end
+                println("Experimento Angel");
+                #A_Angel = solucion[]
+                #A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
+            end
+        end
     end
-    #A_Angel = solucion[]
-    #A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
 end
 
 #=let suma = 0.0;
@@ -72,3 +87,4 @@ end
         write(file, "worst          = $worst \n");
     end
 end
+=#
