@@ -1,5 +1,5 @@
 function PLS(len_N,neighborhood_structure,e,centro,numCentro)
-
+    tick()
     #Memoria vectores estaciones candidatas.
     mem_C = [];
     index_mem_C = 0;
@@ -124,6 +124,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
     filename = name*".txt"
     open(filename, "w") do file
+        write(file, "Segundos              = $(tok()) \n")
         write(file, "alfa Weighted Sum     = $a_ws \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")

@@ -1,4 +1,4 @@
-len_N:3
+len_N:1
 neighborhood_structure:1
 a_ws:0.5
 expPaquete:1
