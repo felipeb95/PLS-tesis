@@ -67,25 +67,3 @@ end
         end
     end
 end
-#=let suma = 0.0;
-    for i=1:length(objs_array)
-        suma = suma + objs_array[i];
-    end
-
-
-    promedio  = suma/length(objs_array);
-    de    = std(floor.(objs_array));
-    best  = minimum(objs_array);
-    worst = maximum(objs_array);
-
-    #Resumen resultados
-    name = "result_exp_$(balance)_$(prioridad)_$(experimentos)_$(best)";
-    filename = name*".txt"
-    open(filename, "w") do file
-        write(file, "promedio       = $promedio \n");
-        write(file, "d.e            = $de   \n");
-        write(file, "best           = $best \n");
-        write(file, "worst          = $worst \n");
-    end
-end
-=#

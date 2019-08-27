@@ -22,11 +22,13 @@ function SolverNL(C)
     end
 
     for j in CANDIDATAS
-        for l in PRIORIDADES
-            pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
-            psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
-            @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
-            @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
+        if C[j] == 1    
+            for l in PRIORIDADES
+                pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
+                psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
+                @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
+                @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
+            end
         end
     end
 
