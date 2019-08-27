@@ -1,5 +1,5 @@
 function PLS(len_N,neighborhood_structure,e,centro,numCentro)
-
+    tick()
     #Memoria vectores estaciones candidatas.
     mem_C = [];
     index_mem_C = 0;
@@ -38,59 +38,78 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
-    while ~visitados(A)
-        #Se generan vecinos
-        println("[PLS Paquete] === Generación de vecinos ===");
-        N = generar_vecindario(len_N,st.C,neighborhood_structure,mem_C,index_mem_C);
-        indiceVisitado = findall(x -> x==st, A);
-        A[indiceVisitado[1]].visitado = 1;
-        println("[PLS Paquete] Índice marcado como visitado: ", indiceVisitado[1]);
+    name = "memArchivoPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    filename = name*".txt"
+    open(filename, "w") do file
+        #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
+        while ~visitados(A)
+            #Se generan vecinos
+            println("[PLS Paquete] === Generación de vecinos ===");
+            N = generar_vecindario(len_N,st.C,neighborhood_structure,mem_C,index_mem_C);
+            indiceVisitado = findall(x -> x==st, A);
+            A[indiceVisitado[1]].visitado = 1;
+            println("[PLS Paquete] Índice marcado como visitado: ", indiceVisitado[1]);
 
-        for i=1:len_N
-            println("[PLS Paquete] Vecino # ",i," ===============");
-            aux_obj, aux_f1, aux_f2, aux_E = SolverNL(N[i,:]);
-            #=  revisar si es dominado por los que están en el archivo
-            si no es dominado por ninguno, entra al archivo  =#
+            for i=1:len_N
+                println("[PLS Paquete] Vecino # ",i," ===============");
+                aux_obj, aux_f1, aux_f2, aux_E = SolverNL(N[i,:]);
+                #=  revisar si es dominado por los que están en el archivo
+                si no es dominado por ninguno, entra al archivo  =#
 
-            if criterioAcceso(aux_f1,aux_f2,A) == true
-                solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,0);
-                push!(A,solNueva);
+                if criterioAcceso(aux_f1,aux_f2,A) == true
+                    solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,0);
+                    push!(A,solNueva);
 
-                #=  se buscan los índices de las soluciones que están dentro
-                del archivo y que están siendo dominadas por la última
-                solución agregada al archivo =#
+                    #=  se buscan los índices de las soluciones que están dentro
+                    del archivo y que están siendo dominadas por la última
+                    solución agregada al archivo =#
 
-                indicesAEliminar = revisarDominanciaEnArchivo(aux_f1,aux_f2,A);
-                str_indicesEliminados = "";
-                if length(indicesAEliminar) != 0
-                    for dominatedIndex = 1 : length(indicesAEliminar)
-                        str_indicesEliminados *= string(indicesAEliminar[dominatedIndex]);
-                        if dominatedIndex != length(indicesAEliminar)
-                            str_indicesEliminados *= ", ";
-                        else
-                            str_indicesEliminados *= ".";
+                    indicesAEliminar = revisarDominanciaEnArchivo(aux_f1,aux_f2,A);
+                    str_indicesEliminados = "";
+                    if length(indicesAEliminar) != 0
+                        for dominatedIndex = 1 : length(indicesAEliminar)
+                            str_indicesEliminados *= string(indicesAEliminar[dominatedIndex]);
+                            if dominatedIndex != length(indicesAEliminar)
+                                str_indicesEliminados *= ", ";
+                            else
+                                str_indicesEliminados *= ".";
+                            end
                         end
+                        println("[PLS Paquete] Indices a eliminar tras análisis dominancia: ", str_indicesEliminados);
+                        #= se eliminan los elementos en el array con los indices
+                        que se guardaron anteriormente. A se actualiza mediante
+                        la función deleteat! =#
+                        deleteat!(A,indicesAEliminar);
+                        println("[PLS Paquete] # nuevo de soluciones en archivo:", length(A));
+                    else
+                        println("[PLS Paquete] No se encontraron soluciones dominadas");
                     end
-                    println("[PLS Paquete] Indices a eliminar tras análisis dominancia: ", str_indicesEliminados);
-                    #= se eliminan los elementos en el array con los indices
-                    que se guardaron anteriormente. A se actualiza mediante
-                    la función deleteat! =#
-                    deleteat!(A,indicesAEliminar);
-                    println("[PLS Paquete] # nuevo de soluciones en archivo:", length(A));
-                else
-                    println("[PLS Paquete] No se encontraron soluciones dominadas");
                 end
             end
+            #= Apenas se elige una solución del archivo, se marca como visitada,
+            ya que se le generará un vecindario apenas comience la siguiente
+            iteración, =#
+            st = selArchivo(A);
+            if(st == nothing)
+                break;
+            end
+            t+=1;
+            write(file, "ITERACION $t \n");
+            for i in 1:length(A)
+                aC       = copy(A[i].C);
+                aE       = copy(A[i].E);
+                a_obj    = copy(A[i].obj);
+                a_obj_f1 = copy(A[i].f1);
+                a_obj_f2 = copy(A[i].f2);
+                write(file, "Archivo [$i] \n")
+
+                write(file, "C               = $aC \n");
+                write(file, "E               = $aE \n");
+                write(file, "FO Weighted Sum = $a_obj \n");
+                write(file, "FO1             = $a_obj_f1 \n");
+                write(file, "FO2             = $a_obj_f2 \n");
+            end
         end
-        #= Apenas se elige una solución del archivo, se marca como visitada,
-        ya que se le generará un vecindario apenas comience la siguiente
-        iteración, =#
-        st = selArchivo(A);
-        if(st == nothing)
-            break;
-        end
-        t+=1;
     end
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
@@ -102,9 +121,10 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)";
+    name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
     filename = name*".txt"
     open(filename, "w") do file
+        write(file, "Segundos              = $(tok()) \n")
         write(file, "alfa Weighted Sum     = $a_ws \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")

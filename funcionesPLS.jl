@@ -1,3 +1,4 @@
+using TickTock
 mutable struct solucion
     C
     E
