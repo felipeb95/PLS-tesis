@@ -21,9 +21,9 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     #SOLUCION INICIAL
     while true
         println("[PLS Paquete] Solución inicial");
-        C,E,f1,f2,obj = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
+        C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
         if obj != Inf
-            st = solucion(C,E,f1,f2,obj,0);
+            st = solucion(C,E,f1,f2,obj,dmax,0);
             push!(A,st); #ACTUALIZAR ACHIVO
             println("A:", length(A));
             break;
@@ -52,12 +52,12 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
 
             for i=1:len_N
                 println("[PLS Paquete] Vecino # ",i," ===============");
-                aux_obj, aux_f1, aux_f2, aux_E = SolverNL(N[i,:]);
+                aux_obj, aux_f1, aux_f2, aux_E, aux_dmax = SolverNL(N[i,:]);
                 #=  revisar si es dominado por los que están en el archivo
                 si no es dominado por ninguno, entra al archivo  =#
 
                 if criterioAcceso(aux_f1,aux_f2,A) == true
-                    solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,0);
+                    solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,aux_dmax,0);
                     push!(A,solNueva);
 
                     #=  se buscan los índices de las soluciones que están dentro
@@ -101,6 +101,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
                 a_obj    = copy(A[i].obj);
                 a_obj_f1 = copy(A[i].f1);
                 a_obj_f2 = copy(A[i].f2);
+                a_dmax   = copy(A[i].dmax);
                 write(file, "Archivo [$i] \n")
 
                 write(file, "C               = $aC \n");
@@ -108,6 +109,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
                 write(file, "FO Weighted Sum = $a_obj \n");
                 write(file, "FO1             = $a_obj_f1 \n");
                 write(file, "FO2             = $a_obj_f2 \n");
+                write(file, "DMAX            = $a_dmax \n");
             end
         end
     end
@@ -141,6 +143,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
             a_obj    = copy(A[i].obj);
             a_obj_f1 = copy(A[i].f1);
             a_obj_f2 = copy(A[i].f2);
+            a_dmax = copy(A[i].dmax);
             write(file, "Archivo [$i] \n")
 
             write(file, "C               = $aC \n");
@@ -148,6 +151,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
             write(file, "FO Weighted Sum = $a_obj \n");
             write(file, "FO1             = $a_obj_f1 \n");
             write(file, "FO2             = $a_obj_f2 \n");
+            write(file, "DMAX            = $a_dmax \n");
         end
     end
     return A;

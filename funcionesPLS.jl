@@ -5,6 +5,7 @@ mutable struct solucion
     f1
     f2
     obj
+    dmax
     visitado
 end
 

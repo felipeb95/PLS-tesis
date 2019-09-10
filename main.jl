@@ -1,8 +1,8 @@
 include("load_data.jl");
 include("parametros.jl");
-include("solver.jl");
 include("helpers.jl");
-include("funcionesPLS.jl")
+include("funcionesPLS.jl");
+include("solver.jl");
 include("PLS.jl");
 include("PLSAngel.jl");
 
