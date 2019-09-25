@@ -5,6 +5,7 @@ mutable struct solucion
     f1
     f2
     obj
+    dmax
     visitado
 end
 
@@ -19,12 +20,13 @@ function visitados(A)
     return visited;
 end
 
-function generar_vecindario(len_N,C,k,mem_C,index_mem_C)
+function generar_vecindario(len_N,C,E,k,mem_C,index_mem_C)
     N = zeros(Int64,len_N,length(CANDIDATAS));
     for i=1:len_N
         aux_C = zeros(Int64,length(CANDIDATAS));
         while true
-            aux_C = swap_center_random_grid(C,k);
+            #aux_C = swap_center_random_grid(C,k);
+            aux_C = swap_center_max_distance_grid(C,E,k)
 
             if compare_N(N,aux_C,len_N) && validate_connection(aux_C) && compare_N(mem_C,aux_C,index_mem_C)
                 index_mem_C += 1;

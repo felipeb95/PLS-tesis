@@ -1,3 +1,31 @@
+function fitness_all(X, Y)
+    fit = [];
+    centers = findall(x->x == 1, Y);
+    for i in centers
+        max_dist = -Inf;
+        stations = findall(x->x == 1, X[:,i]);
+        for j in stations
+            for k in stations
+                max_dist = max(max_dist, dist[j,k] * X[j,i] * X[k,i]);
+            end
+        end
+        push!(fit, max_dist);
+    end
+    return fit;
+end
+
+function order_zones(fit)
+    aux = deepcopy(fit);
+    sorted_zones = [];
+    for i = 1:cl
+        max_pos = findmax(aux)[2];
+        push!(sorted_zones, max_pos);
+        aux[max_pos] = -Inf;
+    end
+    return sorted_zones;
+end
+
+
 function generarC()
     _C = zeros(Int64,length(CANDIDATAS));
     while true
@@ -20,15 +48,15 @@ function init_solution_mo()
             break;
         end
     end
-    _obj,_f1,_f2,_E = SolverNL(_C);
-    return _C,_E,_f1,_f2,_obj;
+    _obj,_f1,_f2,_E,dmax = SolverNL(_C);
+    return _C,_E,_f1,_f2,_obj,dmax;
 end
 
 function init_solution_mo(_C)
     _E = zeros(Int64,length(ESTACIONES));
     _obj = Inf;
-    _obj,_f1,_f2,_E = SolverNL(_C);
-    return _C,_E,_f1,_f2,_obj;
+    _obj,_f1,_f2,_E,dmax = SolverNL(_C);
+    return _C,_E,_f1,_f2,_obj,dmax;
 end
 
 function init_solution_C()

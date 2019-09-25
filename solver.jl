@@ -17,17 +17,21 @@ function SolverNL(C)
 
     for i in ESTACIONES
         for j in CANDIDATAS
-            @constraint(m,x[i,j] <= c[i,j]*C[j])
+            if C[j] == 1
+                @constraint(m,x[i,j] <= c[i,j]*C[j])
+            end
         end
     end
 
     for j in CANDIDATAS
-        if C[j] == 1    
+        if C[j] == 1
             for l in PRIORIDADES
-                pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
-                psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
-                @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
-                @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
+                if l == 1
+                    pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
+                    psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
+                    @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
+                    @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
+                end
             end
         end
     end
@@ -39,16 +43,19 @@ function SolverNL(C)
     status = termination_status(m);
     Z_opt = objective_value(m);
     x_opt = value.(x);
-    #println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
-    #println("FUNCION 1 POR RETORNAR: ", value(f1));
-    #println("FUNCION 2 POR RETORNAR: ", value(f2));
+    println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
+    println("FUNCION 1 POR RETORNAR: ", value(f1));
+    println("FUNCION 2 POR RETORNAR: ", value(f2));
+
+    ##CALCULO DE DMAX
+    dmax = fitness_all(x_opt, C)
 
     if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
-        return Inf, Inf, Inf, E;
+        return Inf, Inf, Inf, E, dmax;
     else
         for i in ESTACIONES
             E[i] = findall(x->x==1,x_opt[i,:])[1];
         end
-        return Z_opt, value(f1), value(f2), E
+        return Z_opt, value(f1), value(f2), E, dmax
     end
 end

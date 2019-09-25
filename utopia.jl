@@ -4,7 +4,7 @@ include("helpers.jl");
 using Statistics;
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
-global prioridad        = 15;
+global prioridad        = 2;
 #Grilla
 global M                = get_grid();
 #Matriz de adyacencia de zonas.
@@ -36,9 +36,14 @@ end
 
 for i in ESTACIONES
     for j in CANDIDATAS
+
         if C[j] == 1
             @constraint(m,x[i,j] <= c[i,j]*C[j])
         end
+
+        #if C[j] == 1
+            @constraint(m,x[i,j] <= c[i,j]*C[j])
+        #end
     end
 end
 
@@ -51,6 +56,16 @@ for j in CANDIDATAS
             @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
         end
     end
+    #if C[j] == 1
+        for l in PRIORIDADES
+            if l == 1
+                pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
+                psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
+                @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
+                @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
+            end
+        end
+    #end
 end
 
 f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES)))
@@ -64,6 +79,8 @@ C_opt = value.(C);
 println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
 #println("FUNCION 1 POR RETORNAR: ", value(f1));
 #println("FUNCION 2 POR RETORNAR: ", value(f2));
+println("FUNCION 1 POR RETORNAR: ", value(f1));
+println("FUNCION 2 POR RETORNAR: ", value(f2));
 
 if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
     #inf

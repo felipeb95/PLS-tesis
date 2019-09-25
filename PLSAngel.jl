@@ -21,9 +21,9 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     #SOLUCION INICIAL
     while true
         println("[PLS Angel] Solución inicial");
-        C,E,f1,f2,obj = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
+        C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
         if obj != Inf
-            st = solucion(C,E,f1,f2,obj,0);
+            st = solucion(C,E,f1,f2,obj,dmax,0);
             push!(A,st); #ACTUALIZAR ACHIVO
             println("A:", length(A));
             break;
@@ -38,7 +38,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    name = "memArchivoPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
@@ -52,14 +52,14 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
 
                 #Se generan vecinos
                 println("GENERANDO VECINOS");
-                N = generar_vecindario(len_N,st.C,neighborhood_structure,mem_C,index_mem_C);
+                N = generar_vecindario(len_N,st.C,st.E,neighborhood_structure,mem_C,index_mem_C);
                 indiceVisitado = findall(x -> x==st, A);
                 A[indiceVisitado[1]].visitado = 1;
                 println("MARCANDO COMO VISITADO EN ESPACIO ", indiceVisitado[1]);
 
                 for j=1:len_N
-                    aux_obj, aux_f1, aux_f2, aux_E = SolverNL(N[j,:]);
-                    solNueva = solucion(N[j,:],aux_E,aux_f1,aux_f2,aux_obj,0);
+                    aux_obj, aux_f1, aux_f2, aux_E, aux_dmax = SolverNL(N[j,:]);
+                    solNueva = solucion(N[j,:],aux_E,aux_f1,aux_f2,aux_obj,aux_dmax,0);
                     push!(A,solNueva);
                 end
 
@@ -75,6 +75,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
                 a_obj    = copy(A[i].obj);
                 a_obj_f1 = copy(A[i].f1);
                 a_obj_f2 = copy(A[i].f2);
+                a_dmax   = copy(A[i].dmax);
                 write(file, "Archivo [$i] \n")
 
                 write(file, "C               = $aC \n");
@@ -82,6 +83,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
                 write(file, "FO Weighted Sum = $a_obj \n");
                 write(file, "FO1             = $a_obj_f1 \n");
                 write(file, "FO2             = $a_obj_f2 \n");
+                write(file, "DMAX            = $a_dmax \n");
             end
         end
     end
@@ -96,7 +98,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
@@ -116,6 +118,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
             a_obj    = copy(A[i].obj);
             a_obj_f1 = copy(A[i].f1);
             a_obj_f2 = copy(A[i].f2);
+            a_dmax   = copy(A[i].dmax);
             write(file, "Archivo [$i] \n")
 
             write(file, "C               = $aC \n");
@@ -123,6 +126,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
             write(file, "FO Weighted Sum = $a_obj \n");
             write(file, "FO1             = $a_obj_f1 \n");
             write(file, "FO2             = $a_obj_f2 \n");
+            write(file, "DMAX            = $a_dmax \n");
         end
     end
     return A;
