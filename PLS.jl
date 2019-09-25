@@ -38,14 +38,14 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    name = "memArchivoPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
         while ~visitados(A)
             #Se generan vecinos
             println("[PLS Paquete] === Generación de vecinos ===");
-            N = generar_vecindario(len_N,st.C,neighborhood_structure,mem_C,index_mem_C);
+            N = generar_vecindario(len_N,st.C,st.E,neighborhood_structure,mem_C,index_mem_C);
             indiceVisitado = findall(x -> x==st, A);
             A[indiceVisitado[1]].visitado = 1;
             println("[PLS Paquete] Índice marcado como visitado: ", indiceVisitado[1]);
@@ -123,7 +123,7 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")

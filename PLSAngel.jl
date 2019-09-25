@@ -38,7 +38,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    name = "memArchivoPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
@@ -52,7 +52,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
 
                 #Se generan vecinos
                 println("GENERANDO VECINOS");
-                N = generar_vecindario(len_N,st.C,neighborhood_structure,mem_C,index_mem_C);
+                N = generar_vecindario(len_N,st.C,st.E,neighborhood_structure,mem_C,index_mem_C);
                 indiceVisitado = findall(x -> x==st, A);
                 A[indiceVisitado[1]].visitado = 1;
                 println("MARCANDO COMO VISITADO EN ESPACIO ", indiceVisitado[1]);
@@ -98,7 +98,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)";
+    name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
