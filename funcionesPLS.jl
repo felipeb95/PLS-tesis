@@ -99,6 +99,8 @@ function analisisDominancia(A)
     return A;
 end
 
+
+
 function getNoVisitadas(A)
     NV = solucion[];
     for i in 1:length(A)
@@ -107,4 +109,56 @@ function getNoVisitadas(A)
         end
     end
     return NV;
+end
+
+function crowdingDistance(A)
+    T =  length(A); # Este es el tamaño del Archivo
+    M =  2; # la cantidad de objetivos
+    cdScores =  zeros(Int64,T); # Inicialización de CD scores
+
+    for m in m:M
+        A = ascendingBubbleSort(A,m); # Sort mediante el m-iésimo objetivo
+        cdScores[1] = cdScores[T] = Inf; # Límite superior e inferior son infinito
+        for i in 2:T-1
+            if(m==1)
+                maxObjValue = maximum(x->x.f1, A);
+                minObjValue = minimum(x->x.f1, A);
+                cdScores[i] = cdScores[i] + ((A[i+1].f1 - A[i-1].f1) / (maxObjValue - minObjValue));
+            end
+            if(m==2)
+                maxObjValue = maximum(x->x.f2, A);
+                minObjValue = minimum(x->x.f2, A);
+                cdScores[i] = cdScores[i] + ((A[i+1].f2 - A[i-1].f2) / (maxObjValue - minObjValue));
+            end
+        end
+    end
+return cdScores;
+end
+
+function ascendingBubbleSort(A,m)
+    # m es el m-iésimo objetivo
+    # Si m = 1, objtivo es f1
+    # Si m = 2, objetivo es f2
+    temp = nothing;
+
+    for i in 1:length(A)-1
+        for j in 2:length(A)
+            if m == 1
+                if(A[j-1].f1 > A[j].f1)
+                    temp = A[j-1];
+                    A[j-1] = A[j];
+                    A[j] = temp;
+                end
+            else
+            if m == 2
+                if(A[j-1].f2 > A[j].f2)
+                    temp = A[j-1];
+                    A[j-1] = A[j];
+                    A[j] = temp;
+                end
+            end
+            end
+        end
+    end
+    return A;
 end
