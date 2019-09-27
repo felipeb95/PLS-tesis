@@ -43,9 +43,13 @@ function SolverNL(C)
     status = termination_status(m);
     Z_opt = objective_value(m);
     x_opt = value.(x);
+    valuef2 = value(f2);
+    if valuef2 > 1
+        valuef2 = 1;
+    end
     println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
     println("FUNCION 1 POR RETORNAR: ", value(f1));
-    println("FUNCION 2 POR RETORNAR: ", value(f2));
+    println("FUNCION 2 POR RETORNAR: ", valuef2);
 
     ##CALCULO DE DMAX
     dmax = fitness_all(x_opt, C)
@@ -56,6 +60,6 @@ function SolverNL(C)
         for i in ESTACIONES
             E[i] = findall(x->x==1,x_opt[i,:])[1];
         end
-        return Z_opt, value(f1), value(f2), E, dmax
+        return Z_opt, value(f1), valuef2, E, dmax
     end
 end
