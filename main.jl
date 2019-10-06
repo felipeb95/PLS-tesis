@@ -11,14 +11,10 @@ using Statistics;
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
 global prioridad        = 5;
-global idealf1 = 0
-global idealf2 = 0
-global anti_idealf1 = 0
-global anti_idealf2 = 0
 if prioridad == 5
     global idealf1 = 261785
-    global idealf2 = 0
-    global anti_idealf1 = 0
+    global idealf2 = 0.1
+    global anti_idealf1 = 500000
     global anti_idealf2 = 1
 end
 if prioridad == 2

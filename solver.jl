@@ -7,8 +7,8 @@ function SolverNL(C)
     m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro",  ["outlev=3"]))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     @variable(m,beta, start = 0.0);
-    f1 = @NLexpression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
-    f2 = @NLexpression(m,beta);
+    f1 = @NLexpression(m,(sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS)-idealf1)/(anti_idealf1-idealf1));
+    f2 = @NLexpression(m,(beta-idealf2)/(anti_idealf2-idealf2));
     @NLobjective(m,Min,a_ws*f1+(1-a_ws)*f2);
 
     for i in ESTACIONES
@@ -17,14 +17,14 @@ function SolverNL(C)
 
     for i in ESTACIONES
         for j in CANDIDATAS
-            if C[j] == 1
+            #if C[j] == 1
                 @constraint(m,x[i,j] <= c[i,j]*C[j])
-            end
+            #end
         end
     end
 
     for j in CANDIDATAS
-        if C[j] == 1
+        #if C[j] == 1
             for l in PRIORIDADES
                 if l == 1
                     pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
@@ -33,7 +33,7 @@ function SolverNL(C)
                     @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
                 end
             end
-        end
+        #end
     end
 
     f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES)))
