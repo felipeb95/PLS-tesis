@@ -4,7 +4,7 @@ include("helpers.jl");
 using Statistics;
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
-global prioridad        = 2;
+global prioridad        = 5;
 #Grilla
 global M                = get_grid();
 #Matriz de adyacencia de zonas.
@@ -67,11 +67,9 @@ println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
 println("FUNCION 1 POR RETORNAR: ", value(f1));
 println("FUNCION 2 POR RETORNAR: ", value(f2));
 
-if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
-    #inf
-else
-    for i in ESTACIONES
-        E[i] = findall(x->x==1,x_opt[i,:])[1];
-    end
-    #no inf
+name = "ideal_f2_prioridad_5";
+filename = name*".txt"
+open(filename, "w") do file
+    write(file, "IDEAL F2              = $(value(f1)) \n")
+    write(file, "ANTI IDEAL F1         = $(value(f2)) \n")
 end
