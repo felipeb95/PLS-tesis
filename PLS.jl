@@ -113,6 +113,12 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
             end
         end
     end
+    #Desnormalizar
+    first_f1 = first_obj_f1 * (anti_idealf1-idealf1) + idealf1;
+    first_f2 = first_obj_f2 * (anti_idealf2-idealf2) + idealf2;
+    write(file, "1° FO1 = $first_f1\n")
+    write(file, "1° FO2 = $first_f2\n")
+
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
     println("Estructura vecindario   = $neighborhood_structure");
