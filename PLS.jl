@@ -126,8 +126,8 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
     println("N° clusters             = $cl");
     println("N° estaciones           = $(length(ESTACIONES))");
     println("1° FO Weighted Sum  = $first_obj");
-    println("1° FO1              = $first_obj_f1");
-    println("1° FO2              = $first_obj_f2");
+    println("1° FO1 Normalizada      = $first_obj_f1");
+    println("1° FO2 Normalizada      = $first_obj_f2");
 
     name = "expPLSPaquete_$(numCentro)_$(e)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
