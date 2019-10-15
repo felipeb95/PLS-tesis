@@ -4,7 +4,7 @@ function SolverNL(C)
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
-    m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro",  ["outlev=3"]))
+    m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro",  ["mip_maxnodes=10 outlev=3"]))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     @variable(m,beta, start = 0.0);
     f1 = @NLexpression(m,(sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS)-idealf1)/(anti_idealf1-idealf1));
@@ -17,23 +17,19 @@ function SolverNL(C)
 
     for i in ESTACIONES
         for j in CANDIDATAS
-            #if C[j] == 1
-                @constraint(m,x[i,j] <= c[i,j]*C[j])
-            #end
+            @constraint(m,x[i,j] <= c[i,j]*C[j])
         end
     end
 
     for j in CANDIDATAS
-        #if C[j] == 1
-            for l in PRIORIDADES
-                if l == 1
-                    pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
-                    psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
-                    @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
-                    @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
-                end
+        for l in PRIORIDADES
+            if l == 1
+                pxsum = @expression(m, sum(prior[i,l]*x[i,j] for i in ESTACIONES))
+                psum = @expression(m, sum(prior[i,l] for i in ESTACIONES))
+                @constraint(m,(pxsum  - floor(psum/cl)*C[j]) <= prioridad)
+                @constraint(m,(floor(psum/cl)*C[j] - pxsum) <= prioridad)
             end
-        #end
+        end
     end
 
     f2Array = @NLexpression(m, [j = 1:num_candidatas], abs(sum(r_menos[i]*x[i,j] for i in ESTACIONES)-sum(r_mas[i]*x[i,j] for i in ESTACIONES)))
@@ -54,12 +50,12 @@ function SolverNL(C)
     ##CALCULO DE DMAX
     dmax = fitness_all(x_opt, C)
 
-    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
-        return Inf, Inf, Inf, E, dmax;
-    else
+    #if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED) || (length(x_opt) == 0)
+    #    return Inf, Inf, Inf, E, dmax;
+    #else
         for i in ESTACIONES
             E[i] = findall(x->x==1,x_opt[i,:])[1];
         end
         return Z_opt, value(f1), valuef2, E, dmax
-    end
+    #end
 end
