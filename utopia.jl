@@ -4,7 +4,7 @@ include("helpers.jl");
 using Statistics;
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
-global prioridad        = 5;
+global prioridad        = 15;
 #Grilla
 global M                = get_grid();
 #Matriz de adyacencia de zonas.
@@ -67,7 +67,7 @@ println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
 println("FUNCION 1 POR RETORNAR: ", value(f1));
 println("FUNCION 2 POR RETORNAR: ", value(f2));
 
-name = "ideal_f2_prioridad_5";
+name = "ideal_f2_prioridad_15";
 filename = name*".txt"
 open(filename, "w") do file
     write(file, "IDEAL F2              = $(value(f1)) \n")
