@@ -100,9 +100,9 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
                 aE       = copy(A[i].E);
                 a_obj    = copy(A[i].obj);
                 a_obj_f1 = copy(A[i].f1);
-                _a_obj_f1   = a_obj_f1_ * (anti_idealf1-idealf1) + idealf1; # No normalizado
+                _a_obj_f1   = a_obj_f1 * (anti_idealf1-idealf1) + idealf1; # No normalizado
                 a_obj_f2 = copy(A[i].f2);
-                _a_obj_f2   = a_obj_f2_n * (anti_idealf2-idealf2) + idealf2; # No normalizado
+                _a_obj_f2   = a_obj_f2 * (anti_idealf2-idealf2) + idealf2; # No normalizado
                 a_dmax   = copy(A[i].dmax);
 
                 write(file, "Archivo [$i] \n")
