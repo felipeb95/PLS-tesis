@@ -23,6 +23,13 @@ if prioridad == 2
     global anti_idealf1 = 1740891
     global anti_idealf2 = 1
 end
+if prioridad == 15
+    global idealf1 = 0
+    global idealf2 = 0
+    global anti_idealf1 = 1
+    global anti_idealf2 = 1
+end
+
 #Grilla
 global M                = get_grid();
 #Matriz de adyacencia de zonas.

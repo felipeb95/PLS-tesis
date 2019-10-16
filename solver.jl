@@ -4,7 +4,7 @@ function SolverNL(C)
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
-    m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro",  ["mip_maxnodes=10 outlev=3"]))
+    m = Model(with_optimizer(AmplNLWriter.Optimizer, "knitro",  ["mip_maxnodes=10 outlev=0"]))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     @variable(m,beta, start = 0.0);
     f1 = @NLexpression(m,(sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS)-idealf1)/(anti_idealf1-idealf1));
