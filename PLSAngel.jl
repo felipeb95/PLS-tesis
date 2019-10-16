@@ -74,16 +74,20 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
                 aE       = copy(A[i].E);
                 a_obj    = copy(A[i].obj);
                 a_obj_f1 = copy(A[i].f1);
+                _a_obj_f1   = a_obj_f1 * (anti_idealf1-idealf1) + idealf1; # No normalizado
                 a_obj_f2 = copy(A[i].f2);
+                _a_obj_f2   = a_obj_f2 * (anti_idealf2-idealf2) + idealf2; # No normalizado
                 a_dmax   = copy(A[i].dmax);
                 write(file, "Archivo [$i] \n")
 
-                write(file, "C               = $aC \n");
-                write(file, "E               = $aE \n");
-                write(file, "FO Weighted Sum = $a_obj \n");
-                write(file, "FO1             = $a_obj_f1 \n");
-                write(file, "FO2             = $a_obj_f2 \n");
-                write(file, "DMAX            = $a_dmax \n");
+                write(file, "C                  = $aC \n");
+                write(file, "E                  = $aE \n");
+                write(file, "FO Weighted Sum    = $a_obj \n");
+                write(file, "FO1 Normalizada    = $a_obj_f1 \n");
+                write(file, "FO2 Normalizada    = $a_obj_f2 \n");
+                write(file, "DMAX               = $a_dmax \n");
+                write(file, "FO1 Sin normalizar = $_a_obj_f1 \n");
+                write(file, "FO2 Sin normalizar = $_a_obj_f2 \n");
             end
         end
     end
