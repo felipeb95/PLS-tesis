@@ -4,11 +4,11 @@ function SolverNL(C)
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
-    m = Model(with_optimizer(AmplNLWriter.Optimizer, "gurobi",  ["outputflag=1"]))
-    #m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0))
+    #m = Model(with_optimizer(AmplNLWriter.Optimizer, "gurobi",  ["OutputFlag=1"]))
+    m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     f1 = @expression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
-    valuef2 = rand(minEpsilon:.0001:maxEpsilon);
+    valuef2 = rand(minEpsilon:.01:maxEpsilon);
     @objective(m,Min,f1);
 
     for i in ESTACIONES
@@ -52,7 +52,7 @@ function SolverNL(C)
     ##CALCULO DE DMAX
     dmax = fitness_all(x_opt, C)
 
-    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED && status != MOI.OTHER_LIMIT)  || (length(x_opt) == 0)
+    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED)  || (Z_opt - floor(Z_opt) != 0) || (length(x_opt) == 0)
         return Inf, Inf, Inf, E, dmax;
     else
         for i in ESTACIONES
