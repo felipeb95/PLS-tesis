@@ -135,6 +135,27 @@ function crowdingDistance(A)
 return cdScores;
 end
 
+function crowdingDistanceForSingleObjective(A,m)
+    T =  length(A); # Este es el tamaño del Archivo
+    cdScores =  zeros(Float64,T); # Inicialización de CD scores
+
+        A = ascendingBubbleSort(A,m); # Sort mediante el m-iésimo objetivo (1 ó 2) 
+        cdScores[1] = cdScores[T] = Inf64; # Límite superior e inferior son infinito
+        for i in 2:T-1
+            if(m==1)
+                maxObjValue = maximum(x->x.f1, A);
+                minObjValue = minimum(x->x.f1, A);
+                cdScores[i] = cdScores[i] + ((A[i+1].f1 - A[i-1].f1) / (maxObjValue - minObjValue));
+            end
+            if(m==2)
+                maxObjValue = maximum(x->x.f2, A);
+                minObjValue = minimum(x->x.f2, A);
+                cdScores[i] = cdScores[i] + ((A[i+1].f2 - A[i-1].f2) / (maxObjValue - minObjValue));
+            end
+        end
+return cdScores;
+end
+
 function ascendingBubbleSort(A,m)
     # m es el m-iésimo objetivo
     # Si m = 1, objtivo es f1

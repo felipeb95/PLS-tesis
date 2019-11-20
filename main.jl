@@ -10,19 +10,26 @@ using Statistics, TickTock;
 
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
-global prioridad        = 5;
-if prioridad == 5
+global prioridad        = 15;
+if prioridad == 15
     global idealf1 = 261785
-    global idealf2 = 0.1
-    global anti_idealf1 = 500000
+    global idealf2 = 0.14744
+    global anti_idealf1 = 1740891
     global anti_idealf2 = 1
 end
 if prioridad == 2
     global idealf1 = 308201
-    global idealf2 = 0
-    global anti_idealf1 = 0
+    global idealf2 = 0.14744
+    global anti_idealf1 = 1740891
     global anti_idealf2 = 1
 end
+if prioridad == 5
+    global idealf1 = 0
+    global idealf2 = 0
+    global anti_idealf1 = 1
+    global anti_idealf2 = 1
+end
+
 #Grilla
 global M                = get_grid();
 #Matriz de adyacencia de zonas.
@@ -72,8 +79,8 @@ end
                         A_Paquete = @time PLS(len_N,neighborhood_structure,e,setC[i],i);
                     end
                     println("Experimento Angel");
-                    #A_Angel = solucion[]
-                    #A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
+                    A_Angel = solucion[]
+                    A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
                 end
             end
         end
