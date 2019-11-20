@@ -6,7 +6,7 @@ include("solver.jl");
 include("PLS.jl");
 include("PLSAngel.jl");
 
-using Statistics;
+using Statistics, TickTock;
 
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
