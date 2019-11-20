@@ -35,8 +35,8 @@ function SolverNL(C)
     for j in CANDIDATAS
         expr2 = @expression(m,sum(r_menos[i]*x[i,j] for i in ESTACIONES));
         expr3 = @expression(m,sum(r_mas[i]*x[i,j] for i in ESTACIONES));
-        @constraint(m, (expr2 - expr3)  <= valuef2  *  (expr2 + expr3));
-        @constraint(m,(-expr2 + expr3) <= valuef2  *  (expr2 + expr3));
+        @constraint(m, (expr2 - expr3)  <= balance  *  (expr2 + expr3));
+        @constraint(m,(-expr2 + expr3) <= balance  *  (expr2 + expr3));
     end
     optimize!(m)
     status = termination_status(m);
@@ -52,7 +52,7 @@ function SolverNL(C)
     ##CALCULO DE DMAX
     dmax = fitness_all(x_opt, C)
 
-    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED && status != MOI.OTHER_LIMIT)  || (length(x_opt) == 0)
+    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED)  || (length(x_opt) == 0)
         return Inf, Inf, Inf, E, dmax;
     else
         for i in ESTACIONES
