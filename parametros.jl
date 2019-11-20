@@ -27,3 +27,5 @@ for i in 1:length(xxx)
 end
 expPaquete = parse(Int,lineas[4]) #Numero de experimentos a realizar en PLS de Paquete
 nCentros = parse(Int,lineas[5]) #Numero de centros a probar
+global minEpsilon = parse(Float64,lineas[6])
+global maxEpsilon = parse(Float64,lineas[7])
