@@ -4,4 +4,4 @@ a_ws:0.5
 expPaquete:1
 nCentros:1
 minEpsilon:0.2
-maxEpsilon:0.6
+maxEpsilon:0.3

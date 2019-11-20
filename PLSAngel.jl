@@ -96,7 +96,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
+    name = "expPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
