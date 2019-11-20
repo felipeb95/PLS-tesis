@@ -4,8 +4,8 @@ function SolverNL(C)
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
-    m = Model(with_optimizer(AmplNLWriter.Optimizer, "gurobi",  ["outputflag=0"]))
-    #m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0))
+    #m = Model(with_optimizer(AmplNLWriter.Optimizer, "gurobi",  ["OutputFlag=1"]))
+    m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     f1 = @expression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
     valuef2 = rand(minEpsilon:.0001:maxEpsilon);
