@@ -38,7 +38,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
+    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
     open(filename, "w") do file
         #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
@@ -74,20 +74,15 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
                 aE       = copy(A[i].E);
                 a_obj    = copy(A[i].obj);
                 a_obj_f1 = copy(A[i].f1);
-                _a_obj_f1   = a_obj_f1 * (anti_idealf1-idealf1) + idealf1; # No normalizado
                 a_obj_f2 = copy(A[i].f2);
-                _a_obj_f2   = a_obj_f2 * (anti_idealf2-idealf2) + idealf2; # No normalizado
                 a_dmax   = copy(A[i].dmax);
                 write(file, "Archivo [$i] \n")
 
                 write(file, "C                  = $aC \n");
                 write(file, "E                  = $aE \n");
-                write(file, "FO Weighted Sum    = $a_obj \n");
-                write(file, "FO1 Normalizada    = $a_obj_f1 \n");
-                write(file, "FO2 Normalizada    = $a_obj_f2 \n");
+                write(file, "FO1                = $a_obj_f1 \n");
+                write(file, "FO2                = $a_obj_f2 \n");
                 write(file, "DMAX               = $a_dmax \n");
-                write(file, "FO1 Sin normalizar = $_a_obj_f1 \n");
-                write(file, "FO2 Sin normalizar = $_a_obj_f2 \n");
             end
         end
     end
@@ -98,15 +93,11 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("Vecinos por iteración   = $len_N");
     println("N° clusters             = $cl");
     println("N° estaciones           = $(length(ESTACIONES))");
-    println("1° FO Weighted Sum  = $first_obj");
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
     name = "expPLSAngel_$(numCentro)_$(a_ws)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
     filename = name*".txt"
-    #Desnormalizar
-    first_f1 = first_obj_f1 * (anti_idealf1-idealf1) + idealf1;
-    first_f2 = first_obj_f2 * (anti_idealf2-idealf2) + idealf2;
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
         write(file, "alfa Weighted Sum     = $a_ws \n")
@@ -115,28 +106,20 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
         write(file, "Vecinos por iteración = $len_N \n")
         write(file, "N° clusters           = $cl \n")
         write(file, "N° estaciones         = $(length(ESTACIONES)) \n")
-        write(file, "1° FO Weighted Sum    = $first_obj\n")
-        write(file, "1° FO1 Normalizada    = $first_obj_f1\n")
-        write(file, "1° FO2 Normalizada    = $first_obj_f2\n")
-        write(file, "1° FO1                = $first_f1\n")
-        write(file, "1° FO2                = $first_f2\n")
+        write(file, "1° FO1                = $first_obj_f1\n")
+        write(file, "1° FO2                = $first_obj_f2\n")
         #sacar de archivo
         for i in 1:length(A)
             aC         = copy(A[i].C);
             aE         = copy(A[i].E);
             a_obj      = copy(A[i].obj);
-            a_obj_f1_n = copy(A[i].f1);
-            a_obj_f1   = a_obj_f1_n * (anti_idealf1-idealf1) + idealf1;
-            a_obj_f2_n = copy(A[i].f2);
-            a_obj_f2   = a_obj_f2_n * (anti_idealf2-idealf2) + idealf2;
+            a_obj_f1 = copy(A[i].f1);
+            a_obj_f2 = copy(A[i].f2);
             a_dmax     = copy(A[i].dmax);
             write(file, "Archivo [$i] \n")
 
             write(file, "C               = $aC \n");
             write(file, "E               = $aE \n");
-            write(file, "FO Weighted Sum = $a_obj \n");
-            write(file, "FO1 Normalizada = $a_obj_f1_n \n");
-            write(file, "FO2 Normalizada = $a_obj_f2_n \n");
             write(file, "FO1             = $a_obj_f1 \n");
             write(file, "FO2             = $a_obj_f2 \n");
             write(file, "DMAX            = $a_dmax \n");
