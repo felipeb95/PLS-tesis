@@ -21,13 +21,12 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     #SOLUCION INICIAL
     while true
         println("[PLS Angel] Solución inicial");
-            C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
-            if obj != Inf
-                st = solucion(C,E,f1,f2,obj,dmax,0);
-                push!(A,st); #ACTUALIZAR ACHIVO
-                println("A:", length(A));
-                break;
-            end
+        C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
+        if obj != Inf
+            st = solucion(C,E,f1,f2,obj,dmax,0);
+            push!(A,st); #ACTUALIZAR ACHIVO
+            println("A:", length(A));
+            break;
         end
     end
 
