@@ -43,7 +43,7 @@ function revisarDominanciaEnArchivo(f1, f2, A)
     indicesDominados = [];
 
     for i in 1:length(A)
-        if(f1 <= A[i].f1 && f2 <= A[i].f2)
+        if(f1 < A[i].f1 && f2 <= A[i].f2)
             push!(indicesDominados, i);
         end
     end
