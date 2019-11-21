@@ -43,7 +43,7 @@ function revisarDominanciaEnArchivo(f1, f2, A)
     indicesDominados = [];
 
     for i in 1:length(A)
-        if(f1 < A[i].f1 && f2 < A[i].f2)
+        if(f1 < A[i].f1 && f2 <= A[i].f2)
             push!(indicesDominados, i);
         end
     end
@@ -81,12 +81,12 @@ function analisisDominancia(A)
     indicesDominados = Int[];
     for i in 1:length(A)
         for j in 1:length(A)
-            if(A[i].f1 < A[j].f1 && A[i].f2 < A[j].f2)
+            if(A[i].f1 < A[j].f1 && A[i].f2 <= A[j].f2)
                 if(findfirst(isequal(j),indicesDominados)==nothing)
                     push!(indicesDominados, j);
                 end
             else
-                if(A[i].f1 > A[j].f1 && A[i].f2 > A[j].f2)
+                if(A[i].f1 > A[j].f1 && A[i].f2 >= A[j].f2)
                     if(findfirst(isequal(i),indicesDominados)==nothing)
                         push!(indicesDominados, i);
                     end
@@ -139,7 +139,7 @@ function crowdingDistanceForSingleObjective(A,m)
     T =  length(A); # Este es el tamaño del Archivo
     cdScores =  zeros(Float64,T); # Inicialización de CD scores
 
-        A = ascendingBubbleSort(A,m); # Sort mediante el m-iésimo objetivo (1 ó 2) 
+        A = ascendingBubbleSort(A,m); # Sort mediante el m-iésimo objetivo (1 ó 2)
         cdScores[1] = cdScores[T] = Inf64; # Límite superior e inferior son infinito
         for i in 2:T-1
             if(m==1)

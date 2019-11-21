@@ -100,7 +100,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
-        write(file, "alfa Weighted Sum     = $a_ws \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")
         write(file, "Vecinos por iteración = $len_N \n")
