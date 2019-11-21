@@ -1,6 +1,6 @@
 using JuMP, Gurobi, AmplNLWriter
 
-function SolverNL(C)
+function SolverNL(C,epsilon)
     num_stations  = length(ESTACIONES);
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
@@ -8,7 +8,7 @@ function SolverNL(C)
     m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     f1 = @expression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
-    valuef2 = rand(minEpsilon:.01:maxEpsilon);
+    valuef2 = epsilon;
     @objective(m,Min,f1);
 
     for i in ESTACIONES

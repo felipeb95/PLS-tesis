@@ -2,6 +2,7 @@
 lineas = []
 array_len_N = []
 array_neighborhood_structure = []
+array_a_ws = []
 global epsilonValues = []
 f = open("parametros.txt") do f
    line = 1

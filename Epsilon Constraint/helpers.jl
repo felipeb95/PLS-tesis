@@ -52,10 +52,10 @@ function init_solution_mo()
     return _C,_E,_f1,_f2,_obj,dmax;
 end
 
-function init_solution_mo(_C)
+function init_solution_mo(_C,_epsilon)
     _E = zeros(Int64,length(ESTACIONES));
     _obj = Inf;
-    _obj,_f1,_f2,_E,dmax = SolverNL(_C);
+    _obj,_f1,_f2,_E,dmax = SolverNL(_C,_epsilon);
     return _C,_E,_f1,_f2,_obj,dmax;
 end
 
