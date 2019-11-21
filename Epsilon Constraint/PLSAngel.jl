@@ -20,9 +20,10 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     A = solucion[]; #CREAR A
     st = solucion;
     #SOLUCION INICIAL
-    auxi = true;
+
     while true
         println("[PLS Angel] Solución inicial");
+        auxi = true;
         for i = 1:length(epsilonValues)
             println("USANDO EPSILON ", i);
             C,E,f1,f2,obj,dmax = init_solution_mo(centro,epsilonValues[i]); #GENERAR SOLUCIÓN INICIAL
