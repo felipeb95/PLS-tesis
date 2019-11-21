@@ -21,12 +21,13 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     #SOLUCION INICIAL
     while true
         println("[PLS Angel] Solución inicial");
-        C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
-        if obj != Inf
-            st = solucion(C,E,f1,f2,obj,dmax,0);
-            push!(A,st); #ACTUALIZAR ACHIVO
-            println("A:", length(A));
-            break;
+            C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
+            if obj != Inf
+                st = solucion(C,E,f1,f2,obj,dmax,0);
+                push!(A,st); #ACTUALIZAR ACHIVO
+                println("A:", length(A));
+                break;
+            end
         end
     end
 
@@ -100,7 +101,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
-        write(file, "alfa Weighted Sum     = $a_ws \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")
         write(file, "Vecinos por iteración = $len_N \n")
