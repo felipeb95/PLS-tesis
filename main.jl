@@ -6,7 +6,7 @@ include("solver.jl");
 include("PLS.jl");
 include("PLSAngel.jl");
 
-using Statistics, TickTock;
+using Statistics, TickTock, Plots;
 
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
@@ -52,13 +52,15 @@ end
             for n = 1:length(array_neighborhood_structure)
                 neighborhood_structure = array_neighborhood_structure[n];
                 println("Prueba con estructura vecinos = ",neighborhood_structure);
-                #for e = 1:expPaquete
+                for e = 1:expPaquete
                     #println("Experimento Paquete nº ",e);
                     #A_Paquete = solucion[]
                     #A_Paquete = @time PLS(len_N,neighborhood_structure,e,setC[i],i);
-                #end
+                end
                 println("Experimento Angel");
                 A_Angel = solucion[]
+                f1A = []
+                f2A = []
                 A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
             end
         end

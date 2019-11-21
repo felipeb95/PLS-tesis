@@ -1,4 +1,5 @@
 function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
+    curveId = 1
     tick()
     #Memoria vectores estaciones candidatas.
     mem_C = [];
@@ -19,20 +20,27 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     A = solucion[]; #CREAR A
     st = solucion;
     #SOLUCION INICIAL
+    auxi = true;
     while true
         println("[PLS Angel] Solución inicial");
         for i = 1:length(epsilonValues)
-            balance = epsilonValues[i];
-            C,E,f1,f2,obj,dmax = init_solution_mo(centro); #GENERAR SOLUCIÓN INICIAL
+            println("USANDO EPSILON ", i);
+            C,E,f1,f2,obj,dmax = init_solution_mo(centro,epsilonValues[i]); #GENERAR SOLUCIÓN INICIAL
             if obj != Inf
                 st = solucion(C,E,f1,balance,obj,dmax,0,curveId);
                 push!(A,st); #ACTUALIZAR ACHIVO
                 println("A:", length(A));
-                break;
+            end
+            if obj == Inf
+                auxi = false;
             end
         end
+        if auxi == true
+            break;
+        end
+        A = solucion[];
     end
-    curveId++;
+    curveId += 1
 
     #Se guarda primera solución.
     first_C = copy(C);
@@ -55,15 +63,27 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
 
                 #Se generan vecinos
                 println("GENERANDO VECINOS");
-                
+                N = generar_vecindario(len_N,st.C,st.E,neighborhood_structure,mem_C,index_mem_C);
+
+                #Aqui se deben marcar todos los del archivo con el mismo curveId
                 indiceVisitado = findall(x -> x==st, A);
-                A[indiceVisitado[1]].visitado = 1;
-                println("MARCANDO COMO VISITADO EN ESPACIO ", indiceVisitado[1]);
+                curveIdBuscado = A[indiceVisitado[1]].curveId;
+                for j=1:length(A)
+                    if (A[j].curveId==curveIdBuscado)
+                        A[j].visitado = 1
+                    end
+                end
+                println("MARCANDO COMO VISITADO EN CURVEID ", curveIdBuscado);
 
                 for j=1:len_N
-                    aux_obj, aux_f1, aux_f2, aux_E, aux_dmax = SolverNL(N[j,:]);
-                    solNueva = solucion(N[j,:],aux_E,aux_f1,aux_f2,aux_obj,aux_dmax,0);
-                    push!(A,solNueva);
+                    println("RESOLVIENDO VECINO ", j);
+                    for k = 1:length(epsilonValues)
+                        println("USANDO EPSILON ", k);
+                        aux_obj, aux_f1, aux_f2, aux_E, aux_dmax = SolverNL(N[j,:],epsilonValues[k]);
+                        solNueva = solucion(N[j,:],aux_E,aux_f1,aux_f2,aux_obj,aux_dmax,0,curveId);
+                        push!(A,solNueva);
+                    end
+                    curveId += 1
                 end
 
             end
@@ -103,7 +123,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
-        write(file, "alfa Weighted Sum     = $a_ws \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")
         write(file, "Vecinos por iteración = $len_N \n")

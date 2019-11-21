@@ -3,7 +3,6 @@ include("parametros.jl");
 include("helpers.jl");
 include("funcionesPLS.jl");
 include("solver.jl");
-include("PLS.jl");
 include("PLSAngel.jl");
 
 using Statistics, TickTock;
@@ -52,7 +51,6 @@ end
             for n = 1:length(array_neighborhood_structure)
                 neighborhood_structure = array_neighborhood_structure[n];
                 println("Prueba con estructura vecinos = ",neighborhood_structure);
-                global curveId = 1;
                 println("Experimento Angel");
                 A_Angel = solucion[];
                 A_Angel = @time PLSAngel(len_N,neighborhood_structure,setC[i],i);
