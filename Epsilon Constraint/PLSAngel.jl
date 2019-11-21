@@ -34,7 +34,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     end
     curveId++;
 
-
     #Se guarda primera solución.
     first_C = copy(C);
     first_E = copy(E);
@@ -56,7 +55,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
 
                 #Se generan vecinos
                 println("GENERANDO VECINOS");
-                N = generar_vecindario(len_N,st.C,st.E,neighborhood_structure,mem_C,index_mem_C);
+                
                 indiceVisitado = findall(x -> x==st, A);
                 A[indiceVisitado[1]].visitado = 1;
                 println("MARCANDO COMO VISITADO EN ESPACIO ", indiceVisitado[1]);

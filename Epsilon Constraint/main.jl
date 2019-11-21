@@ -19,6 +19,7 @@ global adjacency_matrix = get_adjacency_matrix();
 #Matriz de conexiones.
 global c                = connection_calculation();
 
+
 #CREACION DE CENTROS#
 setC = [];
 centro = zeros(Int64,length(CANDIDATAS));
@@ -41,7 +42,6 @@ open(filename, "w") do file
 end
 
 
-
 #PLS
 @time begin
     for i=1:nCentros
@@ -52,11 +52,6 @@ end
             for n = 1:length(array_neighborhood_structure)
                 neighborhood_structure = array_neighborhood_structure[n];
                 println("Prueba con estructura vecinos = ",neighborhood_structure);
-                for e = 1:expPaquete
-                    println("Experimento Paquete nº ",e);
-                    ##A_Paquete = solucion[]
-                    ##A_Paquete = @time PLS(len_N,neighborhood_structure,e,setC[i],i);
-                end
                 global curveId = 1;
                 println("Experimento Angel");
                 A_Angel = solucion[];

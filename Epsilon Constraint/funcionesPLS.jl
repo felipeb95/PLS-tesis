@@ -7,7 +7,9 @@ mutable struct solucion
     obj
     dmax
     visitado
+    curveId
 end
+
 
 function visitados(A)
     visited = true;
@@ -99,15 +101,20 @@ function analisisDominancia(A)
     return A;
 end
 
-
+function uniqueCurveIds(A)
+    A = unique(x->x.curveId, A);
+    return A;
+end
 
 function getNoVisitadas(A)
+    
     NV = solucion[];
     for i in 1:length(A)
         if(A[i].visitado == 0)
             push!(NV,A[i]);
         end
     end
+    NV = uniqueCurveIds(NV);
     return NV;
 end
 
