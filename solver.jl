@@ -52,12 +52,12 @@ function SolverNL(C)
     ##CALCULO DE DMAX
     dmax = fitness_all(x_opt, C)
 
-    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED)  || (Z_opt - floor(Z_opt) != 0) || (length(x_opt) == 0)
+    if (status != MOI.OPTIMAL && status != MOI.LOCALLY_SOLVED)   || (length(x_opt) == 0)
         return Inf, Inf, Inf, E, dmax;
     else
         for i in ESTACIONES
             E[i] = findall(x->x==1,x_opt[i,:])[1];
         end
-        return Z_opt, value(f1), valuef2, E, dmax
+        return round(Z_opt), round(value(f1)), valuef2, E, dmax
     end
 end
