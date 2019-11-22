@@ -42,29 +42,27 @@ end
 
 
 #PLS
-@time begin
-    for i=1:nCentros
-        println("Prueba con centro nº ",i);
-        for l = 1:length(array_len_N)
-            len_N = array_len_N[l];
-            println("Prueba con largo vecindario = ",len_N);
-            for n = 1:length(array_neighborhood_structure)
-                neighborhood_structure = array_neighborhood_structure[n];
-                println("Prueba con estructura vecinos = ",neighborhood_structure);
-                println("Experimento Angel");
-                A_Angel = solucion[];
-                A_Angel =PLSAngel(len_N,neighborhood_structure,setC[i],i);
-                f1A = []
-                f2A = []
-                for f = 1:length(A_Angel)
-                    push!(f1A,A_Angel[f].f1)
-                    push!(f2A,A_Angel[f].f2)
-                end
-                fig = scatter(f1A,f2A,label="Archivo Angel")
-                fn = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(epsilonValues[1])-$(epsilonValues[2])-$(epsilonValues[3])"
-                savefig(fn)
-                savefig(fig, fn)
+for i=1:nCentros
+    println("Prueba con centro nº ",i);
+    for l = 1:length(array_len_N)
+        len_N = array_len_N[l];
+        println("Prueba con largo vecindario = ",len_N);
+        for n = 1:length(array_neighborhood_structure)
+            neighborhood_structure = array_neighborhood_structure[n];
+            println("Prueba con estructura vecinos = ",neighborhood_structure);
+            println("Experimento Angel");
+            A_Angel = solucion[];
+            A_Angel =PLSAngel(len_N,neighborhood_structure,setC[i],i);
+            f1A = []
+            f2A = []
+            for f = 1:length(A_Angel)
+                push!(f1A,A_Angel[f].f1)
+                push!(f2A,A_Angel[f].f2)
             end
+            fig = scatter(f1A,f2A,label="Archivo Angel")
+            fn = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(epsilonValues[1])-$(epsilonValues[2])-$(epsilonValues[3])"
+            savefig(fn)
+            savefig(fig, fn)
         end
     end
 end
