@@ -38,7 +38,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
+    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon_$(epsilonValues[1])-$(epsilonValues[2])-$(epsilonValues[3])";
     filename = name*".txt"
     open(filename, "w") do file
         #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
@@ -96,7 +96,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)";
+    name = "expPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon_$(epsilonValues[1])-$(epsilonValues[2])-$(epsilonValues[3])";
     filename = name*".txt"
     open(filename, "w") do file
         write(file, "Segundos              = $(tok()) \n")
