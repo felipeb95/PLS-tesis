@@ -60,7 +60,7 @@ end
                     push!(f1A,A_Angel[f].f1)
                     push!(f2A,A_Angel[f].f2)
                 end
-                fig = scatter(f1,f2,label="Archivo Angel")
+                fig = scatter(f1A,f2A,label="Archivo Angel")
                 fn = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(epsilonValues[1])-$(epsilonValues[2])-$(epsilonValues[3])"
                 savefig(fn)
                 savefig(fig, fn)

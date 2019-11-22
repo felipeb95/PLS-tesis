@@ -62,7 +62,7 @@ end
                         push!(f1P,A_Paquete[f].f1)
                         push!(f2P,A_Paquete[f].f2)
                     end
-                    fig = scatter(f1,f2,label="Archivo Paquete")
+                    fig = scatter(f1P,f2P,label="Archivo Paquete")
                     fn = "Paquete_$(e)_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
                     savefig(fn)
                     savefig(fig, fn)
@@ -76,7 +76,7 @@ end
                     push!(f1A,A_Angel[f].f1)
                     push!(f2A,A_Angel[f].f2)
                 end
-                fig = scatter(f1,f2,label="Archivo Angel")
+                fig = scatter(f1A,f2A,label="Archivo Angel")
                 fn = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
                 savefig(fn)
                 savefig(fig, fn)
