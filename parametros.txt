@@ -2,6 +2,6 @@ len_N:3
 neighborhood_structure:1
 a_ws:0.5
 expPaquete:1
-nCentros:1
+nCentros:5
 minEpsilon:0.2
 maxEpsilon:0.3
