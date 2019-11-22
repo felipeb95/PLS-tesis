@@ -23,7 +23,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
 
     while true
         println("[PLS Angel] Solución inicial");
-        auxi = true;
         for i = 1:length(epsilonValues)
             println("USANDO EPSILON ", i);
             C,E,f1,f2,obj,dmax = init_solution_mo(centro,epsilonValues[i]); #GENERAR SOLUCIÓN INICIAL
@@ -32,14 +31,15 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
                 push!(A,st); #ACTUALIZAR ACHIVO
                 println("A:", length(A));
             end
-            if obj == Inf
-                auxi = false;
-            end
         end
-        if auxi == true
+        if length(A) > 0
+
             break;
+        else
+            centro = generarC();
+            A = solucion[];
         end
-        A = solucion[];
+
     end
     curveId += 1
 
