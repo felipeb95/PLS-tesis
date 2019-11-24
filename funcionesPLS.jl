@@ -81,15 +81,16 @@ function analisisDominancia(A)
     indicesDominados = Int[];
     for i in 1:length(A)
         for j in 1:length(A)
-            if(A[i].f1 <= A[j].f1 && A[i].f2 <= A[j].f2)
+            if(A[i].f1 < A[j].f1 && A[i].f2 <= A[j].f2)
                 if(findfirst(isequal(j),indicesDominados)==nothing)
                     push!(indicesDominados, j);
                 end
             else
-                if(A[i].f1 >= A[j].f1 && A[i].f2 >= A[j].f2)
+                if(A[i].f1 > A[j].f1 && A[i].f2 >= A[j].f2)
                     if(findfirst(isequal(i),indicesDominados)==nothing)
                         push!(indicesDominados, i);
                     end
+                    break;
                 end
             end
         end
