@@ -9,7 +9,7 @@ using Statistics, TickTock, Plots;
 
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
-global prioridad        = 5;
+##global prioridad        = 2;
 
 #Grilla
 global M                = get_grid();
