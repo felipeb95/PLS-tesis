@@ -58,13 +58,16 @@ function PLS(len_N,neighborhood_structure,e,centro,numCentro)
 
                 if criterioAcceso(aux_f1,aux_f2,A) == true
                     solNueva = solucion(N[i,:],aux_E,aux_f1,aux_f2,aux_obj,aux_dmax,0);
-                    push!(A,solNueva);
+
 
                     #=  se buscan los índices de las soluciones que están dentro
                     del archivo y que están siendo dominadas por la última
                     solución agregada al archivo =#
 
                     indicesAEliminar = revisarDominanciaEnArchivo(aux_f1,aux_f2,A);
+
+                    push!(A,solNueva);
+
                     str_indicesEliminados = "";
                     if length(indicesAEliminar) != 0
                         for dominatedIndex = 1 : length(indicesAEliminar)
