@@ -4,6 +4,7 @@ include("helpers.jl");
 include("funcionesPLS.jl");
 include("solver.jl");
 include("PLSAngel.jl");
+include("fileSavingHelpers.jl")
 
 using Statistics, TickTock, Plots;
 
@@ -41,6 +42,7 @@ open(filename, "w") do file
 end
 
 
+
 #PLS
 for i=1:nCentros
     println("Prueba con centro nº ",i);
@@ -51,6 +53,50 @@ for i=1:nCentros
             neighborhood_structure = array_neighborhood_structure[n];
             println("Prueba con estructura vecinos = ",neighborhood_structure);
             println("Experimento Angel");
+
+            rootDirectory = pwd();
+            cd(rootDirectory);
+            filename = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon";
+            filename = strConcat(filename,epsilonValues)
+            configDirectory = "experimentos serie E"; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO 
+            configDirectory = strConcat(configDirectory,epsilonValues)
+            currentExperiment = nothing;
+            totalRunsStr = []; # STR QUE GUARDARÁ LA CORRIDA PARA LA CONFIGURACIÓN DEL EXPERIMENTO  
+
+            if !isdir(configDirectory)
+                mkdir(configDirectory)
+                println("baseDir created");
+                cd(configDirectory);
+                tr = "totalRuns.txt";
+                open(tr, "w") do file
+                          write(file, "nextRun:1");
+                end
+                currentExperiment = 1; ## EL EXPERIMENTO ACTUAL QUE DEBE SER GUARDADO
+            else 
+                println("already exists");
+                cd(configDirectory)
+                f = open("totalRuns.txt") do f
+                          while !eof(f)
+                                    trLine = readline(f)
+                                    trValue = split(trLine,":")
+                                    push!(totalRunsStr,trValue[2]); 
+                          end
+                end
+                currentExperiment = parse(Int,totalRunsStr[1]); ## EL EXPERIMENTO ACTUAL QUE DEBE SER GUARDADO
+            end
+
+            runDirectory = string("run","$(currentExperiment)");
+
+            if(!isdir(string(configDirectory,"/",runDirectory)))
+                    mkdir(runDirectory)
+                    println("runDir created")
+                    cd(runDirectory)
+            else
+                    println("already exists");
+                    cd(runDirectory)
+            end
+
+
             A_Angel = solucion[];
             A_Angel =PLSAngel(len_N,neighborhood_structure,setC[i],i);
             f1A = []
@@ -59,10 +105,18 @@ for i=1:nCentros
                 push!(f1A,A_Angel[f].f1)
                 push!(f2A,A_Angel[f].f2)
             end
+            
             fig = scatter(f1A,f2A,label="Archivo Angel")
-            fn = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(epsilonValues[1])-$(epsilonValues[2])-$(epsilonValues[3])"
-            savefig(fn)
-            savefig(fig, fn)
+            savefig(filename)
+            savefig(fig, filename)
+
+            cd(string(rootDirectory,"/",configDirectory));
+            f = open("totalRuns.txt","w") do f 
+                    write(f,string("nextRun:",currentExperiment+1));
+            end
+
+            cd(rootDirectory); ## REDIRIGIR AL ROOT POR SI LLEGASE A SER PARTE DE UN PROGRAMA QUE ITERA SOBRE DISTINTOS PARAMS.
+
         end
     end
 end
