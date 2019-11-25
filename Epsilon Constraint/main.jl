@@ -56,9 +56,9 @@ for i=1:nCentros
 
             rootDirectory = pwd();
             cd(rootDirectory);
-            filename = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon";
+            filename = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon ";
             filename = strConcat(filename,epsilonValues)
-            configDirectory = "experimentos serie E"; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO 
+            configDirectory = "experimentos serie E "; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO 
             configDirectory = strConcat(configDirectory,epsilonValues)
             currentExperiment = nothing;
             totalRunsStr = []; # STR QUE GUARDARÁ LA CORRIDA PARA LA CONFIGURACIÓN DEL EXPERIMENTO  

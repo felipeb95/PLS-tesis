@@ -50,7 +50,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
     
-    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon";
+    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
     
     filename = name*".txt"
@@ -122,7 +122,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon";
+    name = "expArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
     filename = name*".txt"
     open(filename, "w") do file
