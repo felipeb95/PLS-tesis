@@ -4,6 +4,7 @@ array_len_N = []
 array_neighborhood_structure = []
 array_a_ws = []
 global epsilonValues = []
+global prioridad = nothing;
 f = open("parametros.txt") do f
    line = 1
    while !eof(f)
@@ -32,3 +33,4 @@ xxx = split(lineas[6], ",");
 for i in 1:length(xxx)
   push!(epsilonValues,parse(Float64,xxx[i]));
 end
+prioridad = parse(Int,lineas[7])
