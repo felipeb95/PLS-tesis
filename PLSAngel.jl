@@ -98,8 +98,9 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,e)
 
     name = "expPLSAngel_$(numCentro)_exp_$(e)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
     filename = name*".txt"
+    segundos = tok()
     open(filename, "w") do file
-        write(file, "Segundos              = $(tok()) \n")
+        write(file, "Segundos              = $(segundos) \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")
         write(file, "Vecinos por iteración = $len_N \n")
@@ -124,5 +125,5 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,e)
             write(file, "DMAX            = $a_dmax \n");
         end
     end
-    return A;
+    return A,segundos,t;
 end

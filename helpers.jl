@@ -1,3 +1,31 @@
+function bubbleSort(list)
+    len = length(list)
+    for i = 1:len-1
+        for j = 2:len
+            if list[j-1].f2 > list[j].f2
+                tmp = list[j-1]
+                list[j-1] = list[j]
+                list[j] = tmp
+            end
+        end
+    end
+    return A
+end
+
+
+function hipervolumen(X, Y)
+
+    area = 0;           #Accumulates area in the loop
+    j = length(X);    #The last vertex is the 'previous' one to the first
+    for i in 1:length(X)
+         area = area +  (X[j]+X[i]) * (Y[j]-Y[i]);
+         j = i;         #j is previous vertex to i
+    end
+    return area/2;
+end
+
+
+
 function fitness_all(X, Y)
     fit = [];
     centers = findall(x->x == 1, Y);
