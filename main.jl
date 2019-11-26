@@ -52,7 +52,7 @@ for i=1:nCentros
             neighborhood_structure = array_neighborhood_structure[n];
             println("Prueba con estructura vecinos = ",neighborhood_structure);
             for e = 1:expPaquete
-                println("Experimento Paquete nº ",e);
+                println("Experimento nº ",e);
                 A_Paquete = solucion[]
                 A_Paquete = PLS(len_N,neighborhood_structure,e,setC[i],i);
                 f1P = []
@@ -65,20 +65,21 @@ for i=1:nCentros
                 fn = "Paquete_$(e)_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
                 savefig(fn)
                 savefig(fig, fn)
+
+                println("Experimento Angel");
+                A_Angel = solucion[]
+                A_Angel = PLSAngel(len_N,neighborhood_structure,setC[i],i,e);
+                f1A = []
+                f2A = []
+                for f = 1:length(A_Angel)
+                    push!(f1A,A_Angel[f].f1)
+                    push!(f2A,A_Angel[f].f2)
+                end
+                fig = scatter(f1A,f2A,label="Archivo Angel")
+                fn = "Angel_$(e)_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
+                savefig(fn)
+                savefig(fig, fn)
             end
-            println("Experimento Angel");
-            A_Angel = solucion[]
-            A_Angel = PLSAngel(len_N,neighborhood_structure,setC[i],i);
-            f1A = []
-            f2A = []
-            for f = 1:length(A_Angel)
-                push!(f1A,A_Angel[f].f1)
-                push!(f2A,A_Angel[f].f2)
-            end
-            fig = scatter(f1A,f2A,label="Archivo Angel")
-            fn = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
-            savefig(fn)
-            savefig(fig, fn)
         end
     end
 end
