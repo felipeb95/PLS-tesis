@@ -49,10 +49,10 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj = copy(obj);
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
-    
+
     name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
-    
+
     filename = name*".txt"
     open(filename, "w") do file
         #HASTA QUE TODAS LAS SOLUCIONES DEL ARCHIVO SEAN VISITADAS
@@ -125,8 +125,9 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     name = "expArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
     filename = name*".txt"
+    segundos = tok()
     open(filename, "w") do file
-        write(file, "Segundos              = $(tok()) \n")
+        write(file, "Segundos              = $(segundos) \n")
         write(file, "n° iter               = $t \n")
         write(file, "Estructura vecindario = $neighborhood_structure \n")
         write(file, "Vecinos por iteración = $len_N \n")
@@ -151,5 +152,5 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
             write(file, "DMAX            = $a_dmax \n");
         end
     end
-    return A;
+    return A,segundos,t;
 end

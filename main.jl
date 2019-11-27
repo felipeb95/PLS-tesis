@@ -81,9 +81,7 @@ XLSX.openxlsx("Resultados.xlsx", mode="w") do xf
                         push!(f1P,A[f].f1)
                         push!(f2P,A[f].f2)
                     end
-                    push!(f1P,450000)
-                    push!(f2P,1.2)
-                    hipervol = hipervolumen(f1P,f2P)
+                    hipervol = hyperVolume(A,450000,1.2)
                     #fig = scatter(f1P,f2P,label="Archivo Paquete")
                     #fn = "Paquete_$(e)_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
                     #savefig(fn)
@@ -147,9 +145,7 @@ XLSX.openxlsx("Resultados.xlsx", mode="w") do xf
                         push!(f1A,A[f].f1)
                         push!(f2A,A[f].f2)
                     end
-                    push!(f1A,450000)
-                    push!(f2A,1.2)
-                    hipervol = hipervolumen(f1A,f2A)
+                    hipervol = hyperVolume(A,450000,1.2)
                     #fig = scatter(f1A,f2A,label="Archivo Angel")
                     #fn = "Angel_$(e)_Centro_$(i)_Prioridad_$(prioridad)_Epsilon_$(minEpsilon)-$(maxEpsilon)"
                     #savefig(fn)

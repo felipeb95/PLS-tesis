@@ -58,10 +58,10 @@ for i=1:nCentros
             cd(rootDirectory);
             filename = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon ";
             filename = strConcat(filename,epsilonValues)
-            configDirectory = "experimentos serie E "; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO 
+            configDirectory = "experimentos serie E "; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO
             configDirectory = strConcat(configDirectory,epsilonValues)
             currentExperiment = nothing;
-            totalRunsStr = []; # STR QUE GUARDARÁ LA CORRIDA PARA LA CONFIGURACIÓN DEL EXPERIMENTO  
+            totalRunsStr = []; # STR QUE GUARDARÁ LA CORRIDA PARA LA CONFIGURACIÓN DEL EXPERIMENTO
 
             if !isdir(configDirectory)
                 mkdir(configDirectory)
@@ -72,14 +72,14 @@ for i=1:nCentros
                           write(file, "nextRun:1");
                 end
                 currentExperiment = 1; ## EL EXPERIMENTO ACTUAL QUE DEBE SER GUARDADO
-            else 
+            else
                 println("already exists");
                 cd(configDirectory)
                 f = open("totalRuns.txt") do f
                           while !eof(f)
                                     trLine = readline(f)
                                     trValue = split(trLine,":")
-                                    push!(totalRunsStr,trValue[2]); 
+                                    push!(totalRunsStr,trValue[2]);
                           end
                 end
                 currentExperiment = parse(Int,totalRunsStr[1]); ## EL EXPERIMENTO ACTUAL QUE DEBE SER GUARDADO
@@ -98,20 +98,20 @@ for i=1:nCentros
 
 
             A_Angel = solucion[];
-            A_Angel =PLSAngel(len_N,neighborhood_structure,setC[i],i);
+            A_Angel,segundos,ite =PLSAngel(len_N,neighborhood_structure,setC[i],i);
             f1A = []
             f2A = []
             for f = 1:length(A_Angel)
                 push!(f1A,A_Angel[f].f1)
                 push!(f2A,A_Angel[f].f2)
             end
-            
+
             fig = scatter(f1A,f2A,label="Archivo Angel")
             savefig(filename)
             savefig(fig, filename)
 
             cd(string(rootDirectory,"/",configDirectory));
-            f = open("totalRuns.txt","w") do f 
+            f = open("totalRuns.txt","w") do f
                     write(f,string("nextRun:",currentExperiment+1));
             end
 
