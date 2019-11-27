@@ -191,10 +191,11 @@ function ascendingBubbleSort(A,m)
     return A;
 end
 
-function hyperVolume(archivo,epsilons,refPointX,refPointY)
+function hyperVolume(archivo,refPointX,refPointY)
     ascendingBubbleSort(archivo,1);
-    println(archivo);
     complement = solucion[];
+    epsilonsFound = unique(v->v.f2,archivo);
+    epsilons = map( i -> epsilonsFound[i].f2, 1:length(epsilonsFound));
     revEpsilons = sort(epsilons,rev=true);
     for i in 1:length(archivo)
         if i == 1 ## Primera solución archivo
@@ -210,21 +211,22 @@ function hyperVolume(archivo,epsilons,refPointX,refPointY)
             push!(complement, compPoint);
         end
     end
-    ##println(complement);
-    
+
     _archivo = vcat(archivo,complement);
+    _referenceArea = refPointX * refPointY;
     _area = 0;
     _epsilons = epsilons;
     push!(_epsilons,refPointY); ## Agrego a epsilons la coordenada Y del punto de referencia para poder cerrar el polígono.
-    ##print(_epsilons);
+    _epsilons = sort(_epsilons);
 
     for i in 1:length(epsilons)-1
-        yLarge = epsilons[i+1] - epsilons[i];
-        pointsFoundForEps = filter(x->x.f2 == epsilons[i],_archivo); ## Todos los puntos cuyo epsilon es igual a epsilon[i].
+        yLarge = _epsilons[i+1] - _epsilons[i];
+        pointsFoundForEps = filter(x->x.f2 == _epsilons[i],_archivo); ## Todos los puntos cuyo epsilon es igual a epsilon[i].
         onlyXList= map( i -> pointsFoundForEps[i].f1, 1:length(pointsFoundForEps)); ## Guardo solo la coordenada x de los puntos encontados para ese epsilon[i].
         xLowest = minimum(onlyXList); ## Busco el minimo valor X que me retornó la función para aquel epsilon[i].
         xLarge = refPointX - xLowest;
         _area = _area + yLarge * xLarge;                
     end
-return _area
+    hyperVol = _area / _referenceArea;
+return hyperVol;
 end
