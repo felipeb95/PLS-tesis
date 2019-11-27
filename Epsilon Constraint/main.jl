@@ -23,100 +23,64 @@ global c                = connection_calculation();
 #CREACION DE CENTROS#
 setC = [];
 centro = zeros(Int64,length(CANDIDATAS));
+#=
 for i = 1:nCentros
     centro = generarC();
     push!(setC,centro);
 end
+=#
 
-name = "centros";
-filename = name*".txt"
-open(filename, "w") do file
-    for i in 1:nCentros
-        aC       = copy(setC[i]);
-        if i!=nCentros
-            write(file, "$aC\n");
-        else
-            write(file, "$aC");
-        end
+centrosString = [];
+f = open("centros.txt") do f
+        while !eof(f)
+        line = readline(f)
+        push!(centrosString,line);
     end
 end
 
-
+nCentros = length(centrosString);
+totalExperimentos = 5;
+global puntoRefX = 450000;
+global puntoRefY = 1.2;
 
 #PLS
 for i=1:nCentros
-    println("Prueba con centro nº ",i);
-    for l = 1:length(array_len_N)
-        len_N = array_len_N[l];
-        println("Prueba con largo vecindario = ",len_N);
-        for n = 1:length(array_neighborhood_structure)
-            neighborhood_structure = array_neighborhood_structure[n];
-            println("Prueba con estructura vecinos = ",neighborhood_structure);
-            println("Experimento Angel");
+    centroActual = centrosString[i];
+    centroActual = replace(centroActual,"["=>"");
+    centroActual = replace(centroActual,"]"=>"");
+    centroActual = replace(centroActual,","=>"");
 
-            rootDirectory = pwd();
-            cd(rootDirectory);
-            filename = "Angel_Centro_$(i)_Prioridad_$(prioridad)_Epsilon ";
-            filename = strConcat(filename,epsilonValues)
-            configDirectory = "experimentos serie E "; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO
-            configDirectory = strConcat(configDirectory,epsilonValues)
-            currentExperiment = nothing;
-            totalRunsStr = []; # STR QUE GUARDARÁ LA CORRIDA PARA LA CONFIGURACIÓN DEL EXPERIMENTO
+    numbers = split(centroActual);
+    setC = parse.(Int64,numbers);
 
-            if !isdir(configDirectory)
-                mkdir(configDirectory)
-                println("baseDir created");
-                cd(configDirectory);
-                tr = "totalRuns.txt";
-                open(tr, "w") do file
-                          write(file, "nextRun:1");
+    for j=1:totalExperimentos;
+        println("Prueba con centro nº ",i);
+        for l = 1:length(array_len_N)
+            len_N = array_len_N[l];
+            println("Prueba con largo vecindario = ",len_N);
+            for n = 1:length(array_neighborhood_structure)
+                neighborhood_structure = array_neighborhood_structure[n];
+                println("Prueba con estructura vecinos = ",neighborhood_structure);
+                println("Experimento Angel");
+
+                filename = "Angel_Centro_$(i)_$(j)_Prioridad_$(prioridad)_Epsilon ";
+                filename = strConcat(filename,epsilonValues)
+
+                A_Angel = solucion[];
+                A_Angel,segundos,ite =PLSAngel(len_N,neighborhood_structure,setC,i,j);
+                f1A = []
+                f2A = []
+                for f = 1:length(A_Angel)
+                    push!(f1A,A_Angel[f].f1)
+                    push!(f2A,A_Angel[f].f2)
                 end
-                currentExperiment = 1; ## EL EXPERIMENTO ACTUAL QUE DEBE SER GUARDADO
-            else
-                println("already exists");
-                cd(configDirectory)
-                f = open("totalRuns.txt") do f
-                          while !eof(f)
-                                    trLine = readline(f)
-                                    trValue = split(trLine,":")
-                                    push!(totalRunsStr,trValue[2]);
-                          end
-                end
-                currentExperiment = parse(Int,totalRunsStr[1]); ## EL EXPERIMENTO ACTUAL QUE DEBE SER GUARDADO
+
+                fig = scatter(f1A,f2A,label="Archivo Angel")
+                savefig(filename)
+                savefig(fig, filename)
+
+
             end
-
-            runDirectory = string("run","$(currentExperiment)");
-
-            if(!isdir(string(configDirectory,"/",runDirectory)))
-                    mkdir(runDirectory)
-                    println("runDir created")
-                    cd(runDirectory)
-            else
-                    println("already exists");
-                    cd(runDirectory)
-            end
-
-
-            A_Angel = solucion[];
-            A_Angel,segundos,ite =PLSAngel(len_N,neighborhood_structure,setC[i],i);
-            f1A = []
-            f2A = []
-            for f = 1:length(A_Angel)
-                push!(f1A,A_Angel[f].f1)
-                push!(f2A,A_Angel[f].f2)
-            end
-
-            fig = scatter(f1A,f2A,label="Archivo Angel")
-            savefig(filename)
-            savefig(fig, filename)
-
-            cd(string(rootDirectory,"/",configDirectory));
-            f = open("totalRuns.txt","w") do f
-                    write(f,string("nextRun:",currentExperiment+1));
-            end
-
-            cd(rootDirectory); ## REDIRIGIR AL ROOT POR SI LLEGASE A SER PARTE DE UN PROGRAMA QUE ITERA SOBRE DISTINTOS PARAMS.
-
         end
     end
 end

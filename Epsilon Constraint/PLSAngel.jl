@@ -1,4 +1,4 @@
-function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
+function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     curveId = 1
     tick()
     #Memoria vectores estaciones candidatas.
@@ -50,7 +50,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
+    name = "memArchivoPLSAngel_$(numCentro)_$(numExperimento)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
 
     filename = name*".txt"
@@ -113,6 +113,8 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
         end
     end
 
+    hipervolumen = hyperVolume(A, puntoRefX,puntoRefY);
+
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
     println("Estructura vecindario   = $neighborhood_structure");
@@ -122,7 +124,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
+    name = "expArchivoPLSAngel_$(numCentro)_$(numExperimento)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
     filename = name*".txt"
     segundos = tok()
@@ -135,6 +137,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
         write(file, "N° estaciones         = $(length(ESTACIONES)) \n")
         write(file, "1° FO1                = $first_obj_f1\n")
         write(file, "1° FO2                = $first_obj_f2\n")
+        write(file, "Hipervolumen          = $hipervolumen\n")
         #sacar de archivo
         for i in 1:length(A)
             aC         = copy(A[i].C);
