@@ -184,3 +184,22 @@ function ascendingBubbleSort(A,m)
     end
     return A;
 end
+
+function hyperVolume(archivo,epsilons,refPointX,refPointY)
+    _area = 0;
+    _epsilons = epsilons; ## Se agrega la coordenada Y del punto de referencia para encerrar el polígono.
+    push!(_epsilons,refPointY);
+    print(_epsilons);
+    for i in 1:length(epsilons)-1
+              yLarge = epsilons[i+1] - epsilons[i];
+              pointsFoundForE = filter(x->x.y==epsilons[i],archivo); ## Todos los puntos cuyo epsilon es igual a epsilon[i].
+              onlyXList= map( i -> pointsFoundForE[i].x, 1:length(pointsFoundForE)); ## Guardo solo la coordenada x de los puntos encontados para ese epsilon[i].
+              xLowest = minimum(onlyXList) ## Busco el minimo valor X que me retornó la función para aquel epsilon[i].
+              xLarge = refPointX - xLowest;
+              _area = _area + yLarge*xLarge;
+              ##println("largo X: ",xLarge," | largo Y: ",yLarge);
+              ##println("current polygon's area: ",area);
+              
+    end
+return _area
+end
