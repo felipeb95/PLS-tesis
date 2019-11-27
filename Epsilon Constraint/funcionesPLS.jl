@@ -192,20 +192,39 @@ function ascendingBubbleSort(A,m)
 end
 
 function hyperVolume(archivo,epsilons,refPointX,refPointY)
+    ascendingBubbleSort(archivo,1);
+    println(archivo);
+    complement = solucion[];
+    revEpsilons = sort(epsilons,rev=true);
+    for i in 1:length(archivo)
+        if i == 1 ## Primera solución archivo
+            compPoint = solucion(nothing,nothing,archivo[i].f1, refPointY,Inf,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
+            push!(complement, compPoint);
+        else ## Cualquier otra solución archivo
+            compPoint = solucion(nothing,nothing,archivo[i].f1, revEpsilons[i-1],Inf,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
+            push!(complement, compPoint);
+        end
+
+        if i == length(archivo) ## Última solución archivo
+            compPoint = solucion(nothing,nothing,refPointX, archivo[i].f2,Inf,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
+            push!(complement, compPoint);
+        end
+    end
+    ##println(complement);
+    
+    _archivo = vcat(archivo,complement);
     _area = 0;
-    _epsilons = epsilons; ## Se agrega la coordenada Y del punto de referencia para encerrar el polígono.
-    push!(_epsilons,refPointY);
-    print(_epsilons);
+    _epsilons = epsilons;
+    push!(_epsilons,refPointY); ## Agrego a epsilons la coordenada Y del punto de referencia para poder cerrar el polígono.
+    ##print(_epsilons);
+
     for i in 1:length(epsilons)-1
-              yLarge = epsilons[i+1] - epsilons[i];
-              pointsFoundForE = filter(x->x.y==epsilons[i],archivo); ## Todos los puntos cuyo epsilon es igual a epsilon[i].
-              onlyXList= map( i -> pointsFoundForE[i].x, 1:length(pointsFoundForE)); ## Guardo solo la coordenada x de los puntos encontados para ese epsilon[i].
-              xLowest = minimum(onlyXList) ## Busco el minimo valor X que me retornó la función para aquel epsilon[i].
-              xLarge = refPointX - xLowest;
-              _area = _area + yLarge*xLarge;
-              ##println("largo X: ",xLarge," | largo Y: ",yLarge);
-              ##println("current polygon's area: ",area);
-              
+        yLarge = epsilons[i+1] - epsilons[i];
+        pointsFoundForEps = filter(x->x.f2 == epsilons[i],_archivo); ## Todos los puntos cuyo epsilon es igual a epsilon[i].
+        onlyXList= map( i -> pointsFoundForEps[i].f1, 1:length(pointsFoundForEps)); ## Guardo solo la coordenada x de los puntos encontados para ese epsilon[i].
+        xLowest = minimum(onlyXList); ## Busco el minimo valor X que me retornó la función para aquel epsilon[i].
+        xLarge = refPointX - xLowest;
+        _area = _area + yLarge * xLarge;                
     end
 return _area
 end
