@@ -38,6 +38,7 @@ f = open("centros.txt") do f
     end
 end
 nCentros = length(centrosString);
+println("Experimento con ", nCentros," centros");
 
 totalExperimentos = 5;
 global puntoRefX = 450000;

@@ -111,31 +111,50 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
                 write(file, "DMAX               = $a_dmax \n");
             end
         end
-        
-        allEpsilons = collect(0.2:0.1:1);
-        uniqueCenterItems = unique(v->v.C,A); ## Soluciones con centro único
-       # uniqueCenters = map(i -> uniqueCenterItems[i].C, 1:length(uniqueCenterItems)); ## Extracción del centro
-        tempA = solucion[];
-        ## AGREGAR FRENTES PARA CADA SOLUCIÓN CON EPSILONS RESTANTES Y CORRER ANÁLISIS DE DOMINANCIA DE NUEVO ##
-        for i in 1:length(uniqueCenterItems)
-            centerToUse = uniqueCenterItems[i].C; ## Centro actual de los centros únicos.
-            sameCenterItems = filter(v->v.C==centerToUse,A); ## Filtro todos los items con ese centro
-            epsilonsForCenter = unique(v->v.f2,sameCenterItems); ## Saco todos epsilons distintos para ese centro
-            epsilonsForCenter = map( i -> epsilonsForCenter[i].f2,1:length(epsilonsForCenter)); ## Extraigo solo epsilon para descartarlos después.
-            epsilonsLeft = filter(v->!(v in epsilonsForCenter),allEpsilons); ## Sólo me quedo con epsilons que no hayan sido usados para el centro actual.
-
-            for j in 1:length(epsilonsLeft) ## Creación de soluciones para los epsilons restantes (no usados) del centro actual.
-                _obj,_f1,_f2,_E,dmax = SolverNL(centerToUse,epsilonsLeft[i]);
-                solNueva = solucion(centerToUse,_E,_f1,epsilonsLeft[i],_obj,dmax,1,-1);
-                push!(tempA,solNueva);
-            end
-        end
-
-        A = vcat(A,tempA);
-        A = analisisDominancia(A);
     end
 
+    println("Creación de frente para cada centro único");
+    allEpsilons = collect(0.2:0.1:1);
+    uniqueCenterItems = unique(v->v.C,A); ## Soluciones con centro único
+    println("Hay ",length(uniqueCenterItems)," centros únicos");
+    # uniqueCenters = map(i -> uniqueCenterItems[i].C, 1:length(uniqueCenterItems)); ## Extracción del centro
+    tempA = solucion[];
+    ## AGREGAR FRENTES PARA CADA SOLUCIÓN CON EPSILONS RESTANTES Y CORRER ANÁLISIS DE DOMINANCIA DE NUEVO ##
+    for i in 1:length(uniqueCenterItems)
+        centerToUse = uniqueCenterItems[i].C; ## Centro actual de los centros únicos.
+        sameCenterItems = filter(v->v.C==centerToUse,A); ## Filtro todos los items con ese centro
+        epsilonsForCenter = unique(v->v.f2,sameCenterItems); ## Saco todos epsilons distintos para ese centro
+        epsilonsForCenter = map( i -> epsilonsForCenter[i].f2,1:length(epsilonsForCenter)); ## Extraigo solo epsilon para descartarlos después.
+        println(length(epsilonsForCenter)," valores epsilons tienen como centro a centro ",i);
+        epsilonsLeft = filter(v->!(v in epsilonsForCenter),allEpsilons); ## Sólo me quedo con epsilons que no hayan sido usados para el centro actual.
+        println("Faltaron ",epsilonsLeft," puntos");
+        for j in 1:length(epsilonsLeft) ## Creación de soluciones para los epsilons restantes (no usados) del centro actual.
+            _obj,_f1,_f2,_E,dmax = SolverNL(centerToUse,epsilonsLeft[j]);
+            println("Solver devuelve f1: ",_f1," y f2 resultante: ",_f2);
+            solNueva = solucion(centerToUse,_E,_f1,epsilonsLeft[j],_obj,dmax,1,-1);
+            println("f1 resultante: ",solNueva.f1," | f2 resultante: ",solNueva.f2);
+            push!(tempA,solNueva);
+        end
+    end
+    println("[PLSAngel] Largo Archivo previo a creación frente es ",length(A));
+    A = vcat(A,tempA);
+    println("[PLSAngel] Post Merge ",length(A));
+
+    ## GRÁFICO TRAS AGREGAR FRENTES.
+    filename = "AngelFrente_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
+    filename = strConcat(filename,epsilonValues)
+    f1A = map( i -> A[i].f1,1:length(A));
+    f2A = map( i -> A[i].f2,1:length(A));
+    fig = scatter(f1A,f2A,label="Archivo Angel")
+    savefig(filename)
+    savefig(fig, filename)
+    ##
+
+    A = analisisDominancia(A);
+    println("[PLSAngel] Largo Archivo post creación frente es ",length(A));
+    
     hipervolumen = hyperVolume(A, puntoRefX,puntoRefY);
+    println("Hipervolumen: ",hipervolumen);
 
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");

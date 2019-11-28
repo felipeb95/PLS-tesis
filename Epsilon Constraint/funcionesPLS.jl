@@ -192,22 +192,30 @@ function ascendingBubbleSort(A,m)
 end
 
 function hyperVolume(archivo,refPointX,refPointY)
+    println("[funcionesPLS] Largo Archivo es ",length(archivo));
     ascendingBubbleSort(archivo,1);
     complement = solucion[];
+    println("[funcionesPLS] Eps archivo");
+    for i in 1:length(archivo)
+        println(archivo[i].f2);
+    end
     epsilonsFound = unique(v->v.f2,archivo);
     epsilons = map( i -> epsilonsFound[i].f2, 1:length(epsilonsFound));
+    println("[funcionesPLS] epsilons: ",epsilons);
     revEpsilons = sort(epsilons,rev=true);
+    println("[funcionesPLS] revEpsilons: ",revEpsilons);
+    println("[funcionesPLS] Largo Epsilons es ",length(revEpsilons));
     for i in 1:length(archivo)
         if i == 1 ## Primera solución archivo
-            compPoint = solucion(nothing,nothing,archivo[i].f1, refPointY,Inf,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
+            compPoint = solucion(nothing,nothing,archivo[i].f1, refPointY,Inf,1,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
             push!(complement, compPoint);
         else ## Cualquier otra solución archivo
-            compPoint = solucion(nothing,nothing,archivo[i].f1, revEpsilons[i-1],Inf,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
+            compPoint = solucion(nothing,nothing,archivo[i].f1, revEpsilons[i-1],Inf,1,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
             push!(complement, compPoint);
         end
 
         if i == length(archivo) ## Última solución archivo
-            compPoint = solucion(nothing,nothing,refPointX, archivo[i].f2,Inf,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
+            compPoint = solucion(nothing,nothing,refPointX, archivo[i].f2,Inf,1,1,nothing); ## Item solución con solo valores signficativos para f1 y f2.
             push!(complement, compPoint);
         end
     end
