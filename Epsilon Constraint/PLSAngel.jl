@@ -111,7 +111,28 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
                 write(file, "DMAX               = $a_dmax \n");
             end
         end
+        
+        allEpsilons = collect(0.2:0.1:1);
+        uniqueCenterItems = unique(v->v.C,A); ## Soluciones con centro único
+       # uniqueCenters = map(i -> uniqueCenterItems[i].C, 1:length(uniqueCenterItems)); ## Extracción del centro
+        tempA = solucion[];
         ## AGREGAR FRENTES PARA CADA SOLUCIÓN CON EPSILONS RESTANTES Y CORRER ANÁLISIS DE DOMINANCIA DE NUEVO ##
+        for i in 1:length(uniqueCenterItems)
+            centerToUse = uniqueCenterItems[i].C; ## Centro actual de los centros únicos.
+            sameCenterItems = filter(v->v.C==centerToUse,A); ## Filtro todos los items con ese centro
+            epsilonsForCenter = unique(v->v.f2,sameCenterItems); ## Saco todos epsilons distintos para ese centro
+            epsilonsForCenter = map( i -> epsilonsForCenter[i].f2,1:length(epsilonsForCenter)); ## Extraigo solo epsilon para descartarlos después.
+            epsilonsLeft = filter(v->!(v in epsilonsForCenter),allEpsilons); ## Sólo me quedo con epsilons que no hayan sido usados para el centro actual.
+
+            for j in 1:length(epsilonsLeft) ## Creación de soluciones para los epsilons restantes (no usados) del centro actual.
+                _obj,_f1,_f2,_E,dmax = SolverNL(centerToUse,epsilonsLeft[i]);
+                solNueva = solucion(centerToUse,_E,_f1,epsilonsLeft[i],_obj,dmax,1,-1);
+                push!(tempA,solNueva);
+            end
+        end
+
+        A = vcat(A,tempA);
+        A = analisisDominancia(A);
     end
 
     hipervolumen = hyperVolume(A, puntoRefX,puntoRefY);

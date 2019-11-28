@@ -37,11 +37,13 @@ f = open("centros.txt") do f
         push!(centrosString,line);
     end
 end
-
 nCentros = length(centrosString);
+
 totalExperimentos = 5;
 global puntoRefX = 450000;
 global puntoRefY = 1.2;
+
+cd(string(pwd(),"/resultados"));
 
 #PLS
 for i=1:nCentros
