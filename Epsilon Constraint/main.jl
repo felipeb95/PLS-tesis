@@ -6,7 +6,7 @@ include("solver.jl");
 include("PLSAngel.jl");
 include("fileSavingHelpers.jl")
 
-using Statistics, TickTock, Plots;
+using Statistics, TickTock, Plots, XLSX;
 
 #Inicializar variables globales de balance y prioridad.
 global balance          = 1;
@@ -43,47 +43,103 @@ println("Experimento con ", nCentros," centros");
 totalExperimentos = 5;
 global puntoRefX = 450000;
 global puntoRefY = 1.2;
+allEpsilons = collect(0.2:0.1:1);
+abc = collect('A':'Z');
 
 cd(string(pwd(),"/resultados"));
-
+expName = string("resultados P ",prioridad," E ");
+expName = strConcat(expName,epsilonValues);
 #PLS
-for i=1:nCentros
-    centroActual = centrosString[i];
-    centroActual = replace(centroActual,"["=>"");
-    centroActual = replace(centroActual,"]"=>"");
-    centroActual = replace(centroActual,","=>"");
+XLSX.openxlsx(expName, mode="w") do xf
 
-    numbers = split(centroActual);
-    setC = parse.(Int64,numbers);
-
-    for j=1:totalExperimentos;
-        println("Prueba con centro nº ",i);
-        for l = 1:length(array_len_N)
-            len_N = array_len_N[l];
-            println("Prueba con largo vecindario = ",len_N);
-            for n = 1:length(array_neighborhood_structure)
-                neighborhood_structure = array_neighborhood_structure[n];
-                println("Prueba con estructura vecinos = ",neighborhood_structure);
-                println("Experimento Angel");
-
-                filename = "Angel_Centro_$(i)_$(j)_Prioridad_$(prioridad)_Epsilon ";
-                filename = strConcat(filename,epsilonValues)
-
-                A_Angel = solucion[];
-                A_Angel,segundos,ite =PLSAngel(len_N,neighborhood_structure,setC,i,j);
-                f1A = []
-                f2A = []
-                for f = 1:length(A_Angel)
-                    push!(f1A,A_Angel[f].f1)
-                    push!(f2A,A_Angel[f].f2)
-                end
-
-                fig = scatter(f1A,f2A,label="Archivo Angel")
-                savefig(filename)
-                savefig(fig, filename)
-
-
-            end
+    for i=1:nCentros
+        sheet = xf[1];
+        if i == 1
+            XLSX.rename!(sheet, "centro 1")
+        else
+            XLSX.addsheet!(xf, "centro $(i)")
+            sheet = xf[i];
         end
+        row = 1;
+
+        centroActual = centrosString[i];
+        centroActual = replace(centroActual,"["=>"");
+        centroActual = replace(centroActual,"]"=>"");
+        centroActual = replace(centroActual,","=>"");
+
+        numbers = split(centroActual);
+        setC = parse.(Int64,numbers);
+
+        for j=1:totalExperimentos
+            println("Prueba con centro nº ",i);
+            for l = 1:length(array_len_N)
+                len_N = array_len_N[l];
+                println("Prueba con largo vecindario = ",len_N);
+                for n = 1:length(array_neighborhood_structure)
+                    neighborhood_structure = array_neighborhood_structure[n];
+                    println("Prueba con estructura vecinos = ",neighborhood_structure);
+                    println("Experimento Angel");
+
+                    filename = "Angel_Centro_$(i)_$(j)_Prioridad_$(prioridad)_Epsilon ";
+                    filename = strConcat(filename,epsilonValues)
+
+                    A_Angel = solucion[];
+                    A_Angel,segundos,ite,hiperVolumen =PLSAngel(len_N,neighborhood_structure,setC,i,j);
+                    
+                    f1A = map( k -> A_Angel[k].f1, 1:length(A_Angel));
+                    f2A = map( k -> A_Angel[k].f2, 1:length(A_Angel));
+
+                    # CELL WITH EXPERIMENT COUNT
+                    expCell = string("A",row);
+                    sheet[expCell] = string("Exp $(j)");
+                                    
+                    # CELL WITH EPSILON HEADER
+                    epsHCell = string("A",row+1);
+                    sheet[epsHCell] = "Epsilon";
+
+                    # CELL WITH FO HEADER
+                    foCell = string("A",row+2);
+                    sheet[foCell] = "FO1";
+
+                    # CELL WITH HYPERVOLUME HEADER
+                    hvRow = string("A",row+3);
+                    sheet[hvRow] = "hyperVolume";
+                    # CELL WITH HYPERVOLUME VALUE
+                    hvRow = string("B",row+3);
+                    sheet[hvRow] = hiperVolumen;
+
+                    # CELL WITH TIME HEADER
+                    time = string("A",row+4);
+                    sheet[time] = "segundos";
+                    # CELL WITH TIME VALUE
+                    time = string("B",row+4);
+			        sheet[time] = segundos;
+
+                    epsInA = unique(v->v.f2,A_Angel);
+                    epsInA = map( k -> epsInA[k].f2, 1:length(epsInA));
+                    epsInA = sort(epsInA);
+
+                    for k in 1:length(allEpsilons)
+                        # ROW WITH EPSILON HEADERS
+                        epsCell = string(abc[k+1],row+1);
+                        sheet[epsCell] = allEpsilons[j];
+        
+                        # ROW WITH OBJECTIVE VALUES
+                        valueCell = string(abc[k+1],row+2);
+                        sheet[valueCell] = (allEpsilons[k] in epsInA) ? f1A[k] : "dominado";
+        
+                    end
+
+                    fig = scatter(f1A,f2A,label="Archivo Angel")
+                    savefig(filename)
+                    savefig(fig, filename)
+
+
+                end
+            end
+            row += 6;
+        end
+        
     end
+
 end

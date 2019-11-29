@@ -155,6 +155,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     
     hipervolumen = hyperVolume(A, puntoRefX,puntoRefY);
     println("Hipervolumen: ",hipervolumen);
+    segundos = tok();
 
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
@@ -164,8 +165,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     println("N° estaciones           = $(length(ESTACIONES))");
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
-
-    name = "expArchivoPLSAngel_$(numCentro)_$(numExperimento)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
+    #=name = "expArchivoPLSAngel_$(numCentro)_$(numExperimento)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
     filename = name*".txt"
     segundos = tok()
@@ -196,5 +196,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
             write(file, "DMAX            = $a_dmax \n");
         end
     end
-    return A,segundos,t;
+    =#
+    return A,segundos,t,hipervolumen;
 end
