@@ -49,6 +49,8 @@ abc = collect('A':'Z');
 cd(string(pwd(),"/resultados"));
 expName = string("resultados P ",prioridad," E ");
 expName = strConcat(expName,epsilonValues);
+expname = string(expName,".xlsx");
+println("[EXCEL FILE] ",expName);
 #PLS
 XLSX.openxlsx(expName, mode="w") do xf
 
@@ -80,11 +82,8 @@ XLSX.openxlsx(expName, mode="w") do xf
                     println("Prueba con estructura vecinos = ",neighborhood_structure);
                     println("Experimento Angel");
 
-                    filename = "Angel_Centro_$(i)_$(j)_Prioridad_$(prioridad)_Epsilon ";
-                    filename = strConcat(filename,epsilonValues)
-
                     A_Angel = solucion[];
-                    A_Angel,segundos,ite,hiperVolumen =PLSAngel(len_N,neighborhood_structure,setC,i,j);
+                    A_Angel,segundos,ite,hiperVolumen = PLSAngel(len_N,neighborhood_structure,setC,i,j);
                     
                     f1A = map( k -> A_Angel[k].f1, 1:length(A_Angel));
                     f2A = map( k -> A_Angel[k].f2, 1:length(A_Angel));
@@ -129,11 +128,6 @@ XLSX.openxlsx(expName, mode="w") do xf
                         sheet[valueCell] = (allEpsilons[k] in epsInA) ? f1A[k] : "dominado";
         
                     end
-
-                    fig = scatter(f1A,f2A,label="Archivo Angel")
-                    savefig(filename)
-                    savefig(fig, filename)
-
 
                 end
             end

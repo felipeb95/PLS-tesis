@@ -137,11 +137,9 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
         end
     end
     println("[PLSAngel] Largo Archivo previo a creación frente es ",length(A));
-    A = vcat(A,tempA);
-    println("[PLSAngel] Post Merge ",length(A));
-
-    ## GRÁFICO TRAS AGREGAR FRENTES.
-    filename = "AngelFrente_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
+    
+    ## GRÁFICO PREVIO A AGREGAR FRENTES
+    filename = "Angel_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
     filename = strConcat(filename,epsilonValues)
     f1A = map( i -> A[i].f1,1:length(A));
     f2A = map( i -> A[i].f2,1:length(A));
@@ -149,14 +147,26 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     savefig(filename)
     savefig(fig, filename)
     ##
-
+    
+    A = vcat(A,tempA);
+    println("[PLSAngel] Post Merge ",length(A));
     A = analisisDominancia(A);
     println("[PLSAngel] Largo Archivo post creación frente es ",length(A));
-    
+
     hipervolumen = hyperVolume(A, puntoRefX,puntoRefY);
     println("Hipervolumen: ",hipervolumen);
     segundos = tok();
 
+    ## GRÁFICO TRAS AGREGAR FRENTES
+    secondfilename = "AngelFrenteCompleto_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
+    secondfilename = strConcat(filename,epsilonValues)
+    f1A = map( i -> A[i].f1,1:length(A));
+    f2A = map( i -> A[i].f2,1:length(A));
+    secondfig = scatter(f1A,f2A,label="Archivo Angel")
+    savefig(secondfilename)
+    savefig(secondfig, secondfilename)
+    ##
+    
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
     println("Estructura vecindario   = $neighborhood_structure");
@@ -165,37 +175,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     println("N° estaciones           = $(length(ESTACIONES))");
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
-    #=name = "expArchivoPLSAngel_$(numCentro)_$(numExperimento)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
-    name = strConcat(name,epsilonValues);
-    filename = name*".txt"
-    segundos = tok()
-    open(filename, "w") do file
-        write(file, "Segundos              = $(segundos) \n")
-        write(file, "n° iter               = $t \n")
-        write(file, "Estructura vecindario = $neighborhood_structure \n")
-        write(file, "Vecinos por iteración = $len_N \n")
-        write(file, "N° clusters           = $cl \n")
-        write(file, "N° estaciones         = $(length(ESTACIONES)) \n")
-        write(file, "1° FO1                = $first_obj_f1\n")
-        write(file, "1° FO2                = $first_obj_f2\n")
-        write(file, "Hipervolumen          = $hipervolumen\n")
-        #sacar de archivo
-        for i in 1:length(A)
-            aC         = copy(A[i].C);
-            aE         = copy(A[i].E);
-            a_obj      = copy(A[i].obj);
-            a_obj_f1 = copy(A[i].f1);
-            a_obj_f2 = copy(A[i].f2);
-            a_dmax     = copy(A[i].dmax);
-            write(file, "Archivo [$i] \n")
-
-            write(file, "C               = $aC \n");
-            write(file, "E               = $aE \n");
-            write(file, "FO1             = $a_obj_f1 \n");
-            write(file, "FO2             = $a_obj_f2 \n");
-            write(file, "DMAX            = $a_dmax \n");
-        end
-    end
-    =#
+    
     return A,segundos,t,hipervolumen;
 end
