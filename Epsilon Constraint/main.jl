@@ -125,7 +125,7 @@ XLSX.openxlsx(expName, mode="w") do xf
         
                         # ROW WITH OBJECTIVE VALUES
                         valueCell = string(abc[k+1],row+2);
-                        objToEpsIndex = findfirst(x->x.f2 == allEpsilons[k],A_Angel); ## Busco el único epsilon que hay para ese valor
+                        objToEpsIndex = findfirst(x->x.f2 == allEpsilons[k],A_Angel); ## Busco el índice del único item asociado que podría existir con epsilon para ese valor sub k.
                         objToEps = objToEpsIndex != nothing ? A_Angel[objToEpsIndex].f1 : "dominado"; ## Si retorno 'nothing' entonces no está ese epsilon, fue dominado.
                         sheet[valueCell] = objToEps;
         
