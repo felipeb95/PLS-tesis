@@ -49,7 +49,7 @@ abc = collect('A':'Z');
 cd(string(pwd(),"/resultados"));
 expName = string("resultados P ",prioridad," E ");
 expName = strConcat(expName,epsilonValues);
-expname = string(expName,".xlsx");
+expName = string(expName,".xlsx");
 println("[EXCEL FILE] ",expName);
 #PLS
 XLSX.openxlsx(expName, mode="w") do xf

@@ -143,7 +143,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     filename = strConcat(filename,epsilonValues)
     f1A = map( i -> A[i].f1,1:length(A));
     f2A = map( i -> A[i].f2,1:length(A));
-    fig = scatter(f1A,f2A,label="Archivo Angel")
+    fig = scatter(f1A,f2A,label="Archivo Angel Original")
     savefig(filename)
     savefig(fig, filename)
     ##
@@ -162,7 +162,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     secondfilename = strConcat(filename,epsilonValues)
     f1A = map( i -> A[i].f1,1:length(A));
     f2A = map( i -> A[i].f2,1:length(A));
-    secondfig = scatter(f1A,f2A,label="Archivo Angel")
+    secondfig = scatter(f1A,f2A,label="Archivo Angel Post Frente")
     savefig(secondfilename)
     savefig(secondfig, secondfilename)
     ##
@@ -175,6 +175,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     println("N° estaciones           = $(length(ESTACIONES))");
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
-    
+
     return A,segundos,t,hipervolumen;
 end
