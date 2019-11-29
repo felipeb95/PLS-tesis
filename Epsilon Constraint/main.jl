@@ -40,7 +40,7 @@ end
 nCentros = length(centrosString);
 println("Experimento con ", nCentros," centros");
 
-totalExperimentos = 2;
+totalExperimentos = 5;
 global puntoRefX = 450000;
 global puntoRefY = 1.2;
 allEpsilons = collect(0.2:0.1:1);
@@ -54,7 +54,7 @@ println("[EXCEL FILE] ",expName);
 #PLS
 XLSX.openxlsx(expName, mode="w") do xf
 
-    for i=1:2
+    for i=1:nCentros
         sheet = xf[1];
         if i == 1
             XLSX.rename!(sheet, "centro 1")
