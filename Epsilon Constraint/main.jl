@@ -40,7 +40,7 @@ end
 nCentros = length(centrosString);
 println("Experimento con ", nCentros," centros");
 
-totalExperimentos = 5;
+totalExperimentos = 2;
 global puntoRefX = 450000;
 global puntoRefY = 1.2;
 allEpsilons = collect(0.2:0.1:1);
@@ -54,7 +54,7 @@ println("[EXCEL FILE] ",expName);
 #PLS
 XLSX.openxlsx(expName, mode="w") do xf
 
-    for i=1:nCentros
+    for i=1:2
         sheet = xf[1];
         if i == 1
             XLSX.rename!(sheet, "centro 1")
@@ -121,11 +121,13 @@ XLSX.openxlsx(expName, mode="w") do xf
                     for k in 1:length(allEpsilons)
                         # ROW WITH EPSILON HEADERS
                         epsCell = string(abc[k+1],row+1);
-                        sheet[epsCell] = allEpsilons[j];
+                        sheet[epsCell] = allEpsilons[k];
         
                         # ROW WITH OBJECTIVE VALUES
                         valueCell = string(abc[k+1],row+2);
-                        sheet[valueCell] = (allEpsilons[k] in epsInA) ? f1A[k] : "dominado";
+                        objToEpsIndex = findfirst(x->x.f2 == allEpsilons[k],A_Angel); ## Busco el único epsilon que hay para ese valor
+                        objToEps = objToEpsIndex != nothing ? A_Angel[objToEpsIndex].f1 : "dominado"; ## Si retorno 'nothing' entonces no está ese epsilon, fue dominado.
+                        sheet[valueCell] = objToEps;
         
                     end
 

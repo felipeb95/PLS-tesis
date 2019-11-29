@@ -159,8 +159,8 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
 
     ## GRÁFICO TRAS AGREGAR FRENTES
     secondfilename = "AngelFrenteCompleto_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
-    secondfilename = strConcat(filename,epsilonValues)
-    f1A = map( i -> A[i].f1,1:length(A));
+    secondfilename = strConcat(secondfilename,epsilonValues)
+    f1A = map( i -> A[i].f1,1:length(A));   
     f2A = map( i -> A[i].f2,1:length(A));
     secondfig = scatter(f1A,f2A,label="Archivo Angel Post Frente")
     savefig(secondfilename)
