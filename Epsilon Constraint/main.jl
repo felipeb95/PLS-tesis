@@ -47,10 +47,24 @@ allEpsilons = collect(0.2:0.1:1);
 abc = collect('A':'Z');
 
 cd(string(pwd(),"/resultados"));
+byConfigDirectory = "resultados P $(prioridad) E "; # DIRECTORIO PARA LA CONFIGURACION DEL EXPERIMENTO 
+byConfigDirectory = strConcat(byConfigDirectory,epsilonValues)
+
+if !isdir(byConfigDirectory)
+    mkdir(byConfigDirectory)
+    println("directorio creado por configuración nueva");
+    cd(byConfigDirectory);
+else 
+    println("directorio con la configuración del experimento actual ya existe");
+    cd(byConfigDirectory)
+end
+
+
 expName = string("resultados P ",prioridad," E ");
 expName = strConcat(expName,epsilonValues);
 expName = string(expName,".xlsx");
 println("[EXCEL FILE] ",expName);
+
 #PLS
 XLSX.openxlsx(expName, mode="w") do xf
 
