@@ -1,4 +1,4 @@
-function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
+function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     curveId = 1
     tick()
     #Memoria vectores estaciones candidatas.
@@ -50,7 +50,7 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     first_obj_f1 = copy(f1);
     first_obj_f2 = copy(f2);
 
-    name = "memArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
+    name = "memArchivoPLSAngel_$(numCentro)_$(numExperimento)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
     name = strConcat(name,epsilonValues);
 
     filename = name*".txt"
@@ -113,6 +113,60 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
         end
     end
 
+    println("Creación de frente para cada centro único");
+    allEpsilons = collect(0.2:0.1:1);
+    uniqueCenterItems = unique(v->v.C,A); ## Soluciones con centro único
+    println("Hay ",length(uniqueCenterItems)," centros únicos");
+    # uniqueCenters = map(i -> uniqueCenterItems[i].C, 1:length(uniqueCenterItems)); ## Extracción del centro
+    tempA = solucion[];
+    ## AGREGAR FRENTES PARA CADA SOLUCIÓN CON EPSILONS RESTANTES Y CORRER ANÁLISIS DE DOMINANCIA DE NUEVO ##
+    for i in 1:length(uniqueCenterItems)
+        centerToUse = uniqueCenterItems[i].C; ## Centro actual de los centros únicos.
+        sameCenterItems = filter(v->v.C==centerToUse,A); ## Filtro todos los items con ese centro
+        epsilonsForCenter = unique(v->v.f2,sameCenterItems); ## Saco todos epsilons distintos para ese centro
+        epsilonsForCenter = map( i -> epsilonsForCenter[i].f2,1:length(epsilonsForCenter)); ## Extraigo solo epsilon para descartarlos después.
+        println(length(epsilonsForCenter)," valores epsilons tienen como centro a centro ",i);
+        epsilonsLeft = filter(v->!(v in epsilonsForCenter),allEpsilons); ## Sólo me quedo con epsilons que no hayan sido usados para el centro actual.
+        println("Faltaron ",epsilonsLeft," puntos");
+        for j in 1:length(epsilonsLeft) ## Creación de soluciones para los epsilons restantes (no usados) del centro actual.
+            _obj,_f1,_f2,_E,dmax = SolverNL(centerToUse,epsilonsLeft[j]);
+            println("Solver devuelve f1: ",_f1," y f2 resultante: ",_f2);
+            solNueva = solucion(centerToUse,_E,_f1,epsilonsLeft[j],_obj,dmax,1,-1);
+            println("f1 resultante: ",solNueva.f1," | f2 resultante: ",solNueva.f2);
+            push!(tempA,solNueva);
+        end
+    end
+    println("[PLSAngel] Largo Archivo previo a creación frente es ",length(A));
+    
+    ## GRÁFICO PREVIO A AGREGAR FRENTES
+    filename = "Angel_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
+    filename = strConcat(filename,epsilonValues)
+    f1A = map( i -> A[i].f1,1:length(A));
+    f2A = map( i -> A[i].f2,1:length(A));
+    fig = scatter(f1A,f2A,label="Archivo Angel Original")
+    savefig(filename)
+    savefig(fig, filename)
+    ##
+    
+    A = vcat(A,tempA);
+    println("[PLSAngel] Post Merge ",length(A));
+    A = analisisDominancia(A);
+    println("[PLSAngel] Largo Archivo post creación frente es ",length(A));
+
+    hipervolumen = hyperVolume(A, puntoRefX,puntoRefY);
+    println("Hipervolumen: ",hipervolumen);
+    segundos = tok();
+
+    ## GRÁFICO TRAS AGREGAR FRENTES
+    secondfilename = "AngelFrenteCompleto_Centro_$(numCentro)_$(numExperimento)_Prioridad_$(prioridad)_Epsilon ";
+    secondfilename = strConcat(secondfilename,epsilonValues)
+    f1A = map( i -> A[i].f1,1:length(A));   
+    f2A = map( i -> A[i].f2,1:length(A));
+    secondfig = scatter(f1A,f2A,label="Archivo Angel Post Frente")
+    savefig(secondfilename)
+    savefig(secondfig, secondfilename)
+    ##
+    
     println("[PLS] ====== Resultados ======");
     println("n° iter                 = $t");
     println("Estructura vecindario   = $neighborhood_structure");
@@ -122,35 +176,5 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro)
     println("1° FO1              = $first_obj_f1");
     println("1° FO2              = $first_obj_f2");
 
-    name = "expArchivoPLSAngel_$(numCentro)_$(len_N)_$(neighborhood_structure)_$(prioridad)_Epsilon ";
-    name = strConcat(name,epsilonValues);
-    filename = name*".txt"
-    segundos = tok()
-    open(filename, "w") do file
-        write(file, "Segundos              = $(segundos) \n")
-        write(file, "n° iter               = $t \n")
-        write(file, "Estructura vecindario = $neighborhood_structure \n")
-        write(file, "Vecinos por iteración = $len_N \n")
-        write(file, "N° clusters           = $cl \n")
-        write(file, "N° estaciones         = $(length(ESTACIONES)) \n")
-        write(file, "1° FO1                = $first_obj_f1\n")
-        write(file, "1° FO2                = $first_obj_f2\n")
-        #sacar de archivo
-        for i in 1:length(A)
-            aC         = copy(A[i].C);
-            aE         = copy(A[i].E);
-            a_obj      = copy(A[i].obj);
-            a_obj_f1 = copy(A[i].f1);
-            a_obj_f2 = copy(A[i].f2);
-            a_dmax     = copy(A[i].dmax);
-            write(file, "Archivo [$i] \n")
-
-            write(file, "C               = $aC \n");
-            write(file, "E               = $aE \n");
-            write(file, "FO1             = $a_obj_f1 \n");
-            write(file, "FO2             = $a_obj_f2 \n");
-            write(file, "DMAX            = $a_dmax \n");
-        end
-    end
-    return A,segundos,t;
+    return A,segundos,t,hipervolumen;
 end

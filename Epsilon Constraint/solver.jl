@@ -5,7 +5,7 @@ function SolverNL(C,epsilon)
     num_candidatas  = length(CANDIDATAS);
     E = zeros(Int64,num_stations);
     #m = Model(with_optimizer(AmplNLWriter.Optimizer, "gurobi",  ["OutputFlag=1"]))
-    m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=1))
+    m = Model(with_optimizer(Gurobi.Optimizer, OutputFlag=0))
     @variable(m,x[i=1:num_stations,j=1:num_candidatas],Bin)
     f1 = @expression(m,sum(dist[i, j] * x[i, j] for i in ESTACIONES, j in CANDIDATAS));
     valuef2 = epsilon;
@@ -44,10 +44,10 @@ function SolverNL(C,epsilon)
     x_opt = value.(x);
 
 
-    println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
-    println("FUNCION 1 POR RETORNAR: ", value(f1));
-    println("FUNCION 2 POR RETORNAR: ", valuef2);
-    println("STATUS: ", status);
+    #println("FUNCION OBJETIVO POR RETORNAR: ", Z_opt);
+    #println("FUNCION 1 POR RETORNAR: ", value(f1));
+    #println("FUNCION 2 POR RETORNAR: ", valuef2);
+    #println("STATUS: ", status);
 
     ##CALCULO DE DMAX
     dmax = fitness_all(x_opt, C)
