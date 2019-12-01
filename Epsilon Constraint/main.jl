@@ -126,7 +126,14 @@ XLSX.openxlsx(expName, mode="w") do xf
                     sheet[time] = "segundos";
                     # CELL WITH TIME VALUE
                     time = string("B",row+4);
-			        sheet[time] = segundos;
+                    sheet[time] = segundos;
+                    
+                    # CELL WITH ITERATIONS HEADER
+                    iterations = string("A",row+5);
+                    sheet[iterations] = "iteraciones";
+                    # CELL WITH ITERATIONS VALUE
+                    iterations = string("B",row+5);
+			        sheet[iterations] = ite;
 
                     epsInA = unique(v->v.f2,A_Angel);
                     epsInA = map( k -> epsInA[k].f2, 1:length(epsInA));
@@ -147,7 +154,7 @@ XLSX.openxlsx(expName, mode="w") do xf
 
                 end
             end
-            row += 6;
+            row += 7;
         end
         
     end
