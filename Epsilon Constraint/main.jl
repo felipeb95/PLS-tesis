@@ -67,16 +67,33 @@ println("[EXCEL FILE] ",expName);
 
 #PLS
 XLSX.openxlsx(expName, mode="w") do xf
+    sheet = xf[1];
+    XLSX.rename!(sheet, "Resultados Angel ED")
+    row = 3;
+    header = 2;
+
+	sheet["A1"] = string("Prioridad ",prioridad);
+    sheet["B1"] = string("Serie Eps: ",epsilonValues);
+    
+    for e in 1:length(allEpsilons)
+		# ROW WITH EPSILON HEADERS
+		epsCell = string(abc[e+1],header);
+		sheet[epsCell] = allEpsilons[e];
+    end
+    
+    # ROW/COL HEADER
+	sheet["A2"] = "Experimento/Epsilon";
+	# CELL WITH TIME HEADER
+	time = string(abc[length(allEpsilons)+2],header);
+	sheet[time] = "Segundos";
+	# CELL WITH TIME HEADER
+	iterations = string(abc[length(allEpsilons)+3],header);
+	sheet[iterations] = "Iteraciones";
+	# CELL WITH HYPERVOLUME HEADER
+	hvRow = string(abc[length(allEpsilons)+4],header);
+	sheet[hvRow] = "Hipervolumen";
 
     for i=1:nCentros
-        sheet = xf[1];
-        if i == 1
-            XLSX.rename!(sheet, "centro 1")
-        else
-            XLSX.addsheet!(xf, "centro $(i)")
-            sheet = xf[i];
-        end
-        row = 1;
 
         centroActual = centrosString[i];
         centroActual = replace(centroActual,"["=>"");
@@ -104,48 +121,28 @@ XLSX.openxlsx(expName, mode="w") do xf
 
                     # CELL WITH EXPERIMENT COUNT
                     expCell = string("A",row);
-                    sheet[expCell] = string("Exp $(j)");
-                                    
-                    # CELL WITH EPSILON HEADER
-                    epsHCell = string("A",row+1);
-                    sheet[epsHCell] = "Epsilon";
+                    sheet[expCell] = string("AngelED_Centro$(i)_Exp$(j)");
 
-                    # CELL WITH FO HEADER
-                    foCell = string("A",row+2);
-                    sheet[foCell] = "FO1";
-
-                    # CELL WITH HYPERVOLUME HEADER
-                    hvRow = string("A",row+3);
-                    sheet[hvRow] = "hyperVolume";
-                    # CELL WITH HYPERVOLUME VALUE
-                    hvRow = string("B",row+3);
-                    sheet[hvRow] = hiperVolumen;
-
-                    # CELL WITH TIME HEADER
-                    time = string("A",row+4);
-                    sheet[time] = "segundos";
                     # CELL WITH TIME VALUE
-                    time = string("B",row+4);
+                    time = string(abc[length(allEpsilons)+2],row);
                     sheet[time] = segundos;
                     
-                    # CELL WITH ITERATIONS HEADER
-                    iterations = string("A",row+5);
-                    sheet[iterations] = "iteraciones";
                     # CELL WITH ITERATIONS VALUE
-                    iterations = string("B",row+5);
-			        sheet[iterations] = ite;
+                    iterations = string(abc[length(allEpsilons)+3],row);
+                    sheet[iterations] = ite;
+
+                    # CELL WITH HYPERVOLUME VALUE
+                    hvRow = string(abc[length(allEpsilons)+4],row);
+                    sheet[hvRow] = hiperVolumen;
+    
 
                     epsInA = unique(v->v.f2,A_Angel);
                     epsInA = map( k -> epsInA[k].f2, 1:length(epsInA));
                     epsInA = sort(epsInA);
 
                     for k in 1:length(allEpsilons)
-                        # ROW WITH EPSILON HEADERS
-                        epsCell = string(abc[k+1],row+1);
-                        sheet[epsCell] = allEpsilons[k];
-        
                         # ROW WITH OBJECTIVE VALUES
-                        valueCell = string(abc[k+1],row+2);
+                        valueCell = string(abc[k+1],row);
                         objToEpsIndex = findfirst(x->x.f2 == allEpsilons[k],A_Angel); ## Busco el índice del único item asociado que podría existir con epsilon para ese valor sub k.
                         objToEps = objToEpsIndex != nothing ? A_Angel[objToEpsIndex].f1 : "dominado"; ## Si retorno 'nothing' entonces no está ese epsilon, fue dominado.
                         sheet[valueCell] = objToEps;
@@ -154,7 +151,7 @@ XLSX.openxlsx(expName, mode="w") do xf
 
                 end
             end
-            row += 7;
+            row += 1;
         end
         
     end
