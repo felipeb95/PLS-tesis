@@ -114,7 +114,6 @@ function PLSAngel(len_N,neighborhood_structure,centro,numCentro,numExperimento)
     end
 
     println("Creación de frente para cada centro único");
-    allEpsilons = collect(0.2:0.1:1);
     uniqueCenterItems = unique(v->v.C,A); ## Soluciones con centro único
     println("Hay ",length(uniqueCenterItems)," centros únicos");
     # uniqueCenters = map(i -> uniqueCenterItems[i].C, 1:length(uniqueCenterItems)); ## Extracción del centro

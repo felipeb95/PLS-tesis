@@ -44,7 +44,7 @@ println("EpsilonValues: ",epsilonValues);
 totalExperimentos = 5;
 global puntoRefX = 450000;
 global puntoRefY = 1.2;
-allEpsilons = collect(0.2:0.01:0.3);
+global allEpsilons = collect(0.2:0.01:0.3);
 abc = collect('A':'Z');
 
 cd(string(pwd(),"/resultados"));
@@ -145,7 +145,7 @@ XLSX.openxlsx(expName, mode="w") do xf
                         # ROW WITH OBJECTIVE VALUES
                         valueCell = string(abc[k+1],row);
                         objToEpsIndex = findfirst(x->x.f2 == allEpsilons[k],A_Angel); ## Busco el índice del único item asociado que podría existir con epsilon para ese valor sub k.
-                        objToEps = objToEpsIndex != nothing ? A_Angel[objToEpsIndex].f1 : "dominado"; ## Si retorno 'nothing' entonces no está ese epsilon, fue dominado.
+                        objToEps = objToEpsIndex != nothing ? A_Angel[objToEpsIndex].f1 : ""; ## Si retorno 'nothing' entonces no está ese epsilon, fue dominado.
                         sheet[valueCell] = objToEps;
         
                     end

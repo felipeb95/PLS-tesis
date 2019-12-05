@@ -3,5 +3,5 @@ neighborhood_structure:1
 a_ws:0.5
 expPaquete:1
 nCentros:1
-epsilonValues:0.3,0.6,0.9
+epsilonValues:0.2,0.25,0.3
 prioridad:5
