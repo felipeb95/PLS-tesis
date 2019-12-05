@@ -39,11 +39,12 @@ f = open("centros.txt") do f
 end
 nCentros = length(centrosString);
 println("Experimento con ", nCentros," centros");
+println("EpsilonValues: ",epsilonValues);
 
 totalExperimentos = 5;
 global puntoRefX = 450000;
 global puntoRefY = 1.2;
-allEpsilons = collect(0.2:0.1:1);
+allEpsilons = collect(0.2:0.01:0.3);
 abc = collect('A':'Z');
 
 cd(string(pwd(),"/resultados"));
